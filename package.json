@@ -4,11 +4,7 @@
     "module": "ServerUtils.ts",
     "type": "module",
     "scripts": {
-        "build": "tsc",
-        "start": "tsx ServerUtils",
-        "dev": "tsx watch ServerUtils",
-        "init": "npm i && mkdir -p Data && touch .env",
-        "prod": "npm ci && mkdir -p Data && touch .env"
+        "dev": "tsx watch ServerUtils.ts"
     },
     "dependencies": {
         "@types/node": "^20.3.1",
@@ -18,9 +14,7 @@
         "dayjs": "^1.11.9",
         "discord.js": "^14.11.0",
         "dotenv": "^16.3.1",
-        "kazagumo": "^2.3.2",
-        "quick.db": "^9.1.6",
-        "shoukaku": "^3.4.0"
+        "quick.db": "^9.1.6"
     },
     "devDependencies": {
         "tsx": "^3.12.7",
