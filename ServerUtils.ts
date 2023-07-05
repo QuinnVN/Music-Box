@@ -1,3 +1,4 @@
+import { Kazagumo } from "kazagumo";
 import { QuickDB } from "quick.db";
 import { Client, ClientOptions, GatewayIntentBits } from "discord.js";
 import loadCommands from "./Handlers/CommandLoader.js";
@@ -7,6 +8,7 @@ import { readFileSync } from "fs";
 import config from "./config.js";
 import database from "./Handlers/DatabaseLoader.js";
 import dotenv from "dotenv";
+import loadKazagumo from "./Handlers/MusicLoader.js";
 const package_json = JSON.parse(readFileSync("./package.json", "utf-8"));
 dotenv.config();
 
@@ -37,6 +39,7 @@ export default class ServerUtilsClient extends Client {
 
         loadEvents(this, "./Events/");
         loadCommands(this, "./Commands/");
+        this.kazagumo = loadKazagumo(this, config.lavalinkNodes);
     }
 
     public readonly config: object;
@@ -44,6 +47,7 @@ export default class ServerUtilsClient extends Client {
     public readonly version: number;
     public readonly commands: Map<string, Command>;
     public readonly db: QuickDB;
+    public readonly kazagumo: Kazagumo;
 }
 
 const ServerUtils = new ServerUtilsClient({

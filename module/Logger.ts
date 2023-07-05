@@ -2,29 +2,37 @@ import chalk from "chalk";
 import dayjs from "dayjs";
 
 export default class Logger {
-    static log(content: string) {
-        const date = dayjs().format("DD:MM:YYYY hh/mm/ss");
+    static log(...content: unknown[]) {
+        const date = dayjs().format("hh:mm:ss DD/MM/YYYY");
 
-        console.log(`[${chalk.gray(date)}] ${chalk.blueBright("[LOG]")} ${content}`);
+        console.log(`[${chalk.gray(date)}] ${chalk.blueBright("[LOG]")} ${content.toString()}`);
     }
 
-    static info(content: string) {
-        const date = dayjs().format("DD:MM:YYYY hh/mm/ss");
-
-        console.log(`[${chalk.gray(date)}] ${chalk.greenBright("[INFO]")} ${chalk.green(content)}`);
-    }
-
-    static warn(content: string) {
-        const date = dayjs().format("DD:MM:YYYY hh/mm/ss");
+    static info(...content: unknown[]) {
+        const date = dayjs().format("hh:mm:ss DD/MM/YYYY");
 
         console.log(
-            `[${chalk.gray(date)}] ${chalk.yellowBright("[WARN]")} ${chalk.yellow(content)}`
+            `[${chalk.gray(date)}] ${chalk.greenBright("[INFO]")} ${chalk.green(
+                content.toString()
+            )}`
         );
     }
 
-    static error(content: string) {
-        const date = dayjs().format("DD:MM:YYYY hh/mm/ss");
+    static warn(...content: unknown[]) {
+        const date = dayjs().format("hh:mm:ss DD/MM/YYYY");
 
-        console.log(`[${chalk.gray(date)}] ${chalk.redBright("[LOG]")} ${chalk.red(content)}`);
+        console.log(
+            `[${chalk.gray(date)}] ${chalk.yellowBright("[WARN]")} ${chalk.yellow(
+                content.toString()
+            )}`
+        );
+    }
+
+    static error(...content: unknown[]) {
+        const date = dayjs().format("hh:mm:ss DD/MM/YYYY");
+
+        console.log(
+            `[${chalk.gray(date)}] ${chalk.redBright("[ERROR]")} ${chalk.red(content.toString())}`
+        );
     }
 }

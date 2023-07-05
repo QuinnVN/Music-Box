@@ -14,6 +14,8 @@ export default async function loadEvents(client: ServerUtilsClient, dir: string)
         }
         const event = (await import(`.${root}${item}`)).default as Event<any>;
 
+        if (!event) return EventTable.addRow(i.toString(), item.split(".")[0], "Error", "No Data");
+
         if (event.once) {
             client.once(event.name, event.run);
             EventTable.addRow(i.toString(), item.split(".")[0], "Loaded", "Once");

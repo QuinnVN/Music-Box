@@ -13,7 +13,7 @@ export default async function loadCommands(client: ServerUtilsClient, dir: strin
             return readdirSync(newRoot).forEach(async (item) => loadCommand(newRoot, item));
         }
         const command = (await import(`.${root}${item}`)).default as Command;
-
+        if (!command) return CommandTable.addRow(i.toString(), item, "Error", "No Data");
         client.commands.set(command.data.name, command);
         CommandTable.addRow(
             i.toString(),
