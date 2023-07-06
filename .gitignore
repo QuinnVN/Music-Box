@@ -1,4 +1,36 @@
-node_modules
-# Keep environment variables out of version control
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage
+
+# Transpiled files
+build/
+
+# VS Code
+.vscode
+!.vscode/tasks.js
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Misc
+.DS_Store
+
+# Data
+Data/
+
+# Test
+test.ts
+test.png
+
+#Enviromental Variables
 .env
-db.sqlite

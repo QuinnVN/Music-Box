@@ -4,7 +4,10 @@
     "module": "ServerUtils.ts",
     "type": "module",
     "scripts": {
-        "dev": "tsx watch ServerUtils.ts"
+        "dev": "tsx watch ServerUtils",
+        "start": "tsx ServerUtils",
+        "build": "tsc",
+        "init": "npm i && mkdir Data && touch .env"
     },
     "dependencies": {
         "@types/node": "^20.3.1",

@@ -29,5 +29,26 @@ export default function loadKazagumo(client: ServerUtilsClient, nodes: NodeOptio
         Logger.log(`Lavalink Node '${name}': Debug`, info)
     );
 
+    kazagumo.on("playerStart", async (player, track) => {
+        const channel = await client.channels.cache.get(player.textId);
+        if (!channel || !channel?.isTextBased()) return;
+        channel
+            .send({ content: `Now playing **${track.title}** by **${track.author}**` })
+            .then((x) => player.data.set("message", x));
+    });
+
+    kazagumo.on("playerEnd", (player) => {
+        player.data.get("message")?.edit({ content: `Finished playing` });
+    });
+
+    kazagumo.on("playerEmpty", async (player) => {
+        const channel = await client.channels.cache.get(player.textId);
+        if (!channel || !channel?.isTextBased()) return;
+        channel
+            .send({ content: `Destroyed player due to inactivity.` })
+            .then((x) => player.data.set("message", x));
+        player.destroy();
+    });
+
     return kazagumo;
 }
