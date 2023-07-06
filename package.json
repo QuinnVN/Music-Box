@@ -1,11 +1,11 @@
 {
-    "name": "serverutilities",
-    "version": "0.0.1",
-    "module": "ServerUtils.ts",
+    "name": "musicbox",
+    "version": "0.2.0",
+    "module": "MusicBox.ts",
     "type": "module",
     "scripts": {
-        "dev": "tsx watch ServerUtils",
-        "start": "tsx ServerUtils",
+        "dev": "tsx watch MusicBox",
+        "start": "tsx MusicBox",
         "build": "tsc",
         "init": "npm i && mkdir Data && touch .env"
     },
@@ -17,6 +17,8 @@
         "dayjs": "^1.11.9",
         "discord.js": "^14.11.0",
         "dotenv": "^16.3.1",
+        "kazagumo": "^2.3.2",
+        "kazagumo-spotify": "^1.2.0",
         "quick.db": "^9.1.6"
     },
     "devDependencies": {

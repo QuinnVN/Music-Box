@@ -1,21 +1,26 @@
-import { Client, Events, SlashCommandBuilder } from "discord.js";
-import ServerUtilsClient from "../../ServerUtils.js";
+import { ActivityType, Client, Events, SlashCommandBuilder } from "discord.js";
+import MusicBoxClient from "../../MusicBox.js";
 import Event from "../../module/types/Events.js";
 import { EventTable } from "../../Handlers/EventHandler.js";
 import { CommandTable } from "../../Handlers/CommandLoader.js";
 import Logger from "../../module/Logger.js";
 
 async function onReady(client: Client) {
-    const ServerUtils = client as ServerUtilsClient;
+    const MusicBox = client as MusicBoxClient;
 
     console.log(EventTable.toString());
     console.log(CommandTable.toString());
-    const Commands: SlashCommandBuilder[] = [];
-    ServerUtils.commands.forEach((command) => Commands.push(command.data));
-    ServerUtils.application?.commands.set(Commands);
+    const Commands: Pick<SlashCommandBuilder, "name" | "toJSON">[] = [];
+    MusicBox.commands.forEach((command) => Commands.push(command.data));
+    MusicBox.application?.commands.set(Commands);
 
-    Logger.info(`Logged in as ${ServerUtils.user?.tag}`);
+    Logger.info(`Logged in as ${MusicBox.user?.tag}`);
     Logger.info("Sqlite DB loaded");
+
+    MusicBox.user?.setActivity({
+        name: "In closed Alpha",
+        type: ActivityType.Listening,
+    });
 }
 
 export default new Event({

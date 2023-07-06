@@ -28,7 +28,17 @@ export default class Logger {
         const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
 
         console.log(
-            `[${chalk.gray(date)}] ${chalk.redBright("[LOG]")} ${chalk.red(text.toString())}`
+            `[${chalk.gray(date)}] ${chalk.redBright("[ERROR]")} ${chalk.red(text.toString())}`
+        );
+    }
+
+    static music(...text: unknown[]) {
+        const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
+
+        console.log(
+            `[${chalk.gray(date)}] ${chalk.magentaBright("[MUSIC]")} ${chalk.magenta(
+                text.toString()
+            )}`
         );
     }
 }

@@ -1,10 +1,10 @@
 import { lstatSync, readdirSync } from "fs";
-import ServerUtilsClient from "../ServerUtils.js";
+import MusicBoxClient from "../MusicBox.js";
 import Event from "../module/types/Events.js";
 //@ts-ignore
 import AsciiTable from "ascii-table";
 export const EventTable = new AsciiTable("Events").setHeading("", "Name", "Status", "Note");
-export default async function loadEvents(client: ServerUtilsClient, dir: string) {
+export default async function loadEvents(client: MusicBoxClient, dir: string) {
     let i = 1;
     async function loadEvent(root: string, item: string): Promise<any> {
         if (lstatSync(root + item).isDirectory()) {
@@ -13,6 +13,11 @@ export default async function loadEvents(client: ServerUtilsClient, dir: string)
             return readdirSync(newRoot).forEach(async (item) => loadEvent(newRoot, item));
         }
         const event = (await import(`.${root}${item}`)).default as Event<any>;
+        if (!event) {
+            EventTable.addRow(i.toString(), item.split(".")[0], "Error", "Cannot Load Data");
+            i++;
+            return;
+        }
 
         if (event.once) {
             client.once(event.name, event.run);

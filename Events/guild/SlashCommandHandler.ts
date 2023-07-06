@@ -1,20 +1,21 @@
 import { Colors, EmbedBuilder, Events, Interaction } from "discord.js";
 import Event from "../../module/types/Events.js";
-import ServerUtilsClient from "../../ServerUtils.js";
+import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors } from "../../module/errors/index.js";
+import Logger from "../../module/Logger.js";
 
 async function handleSlashCommand(interaction: Interaction) {
     if (!interaction.isChatInputCommand() && !interaction.isAutocomplete()) return;
 
-    const ServerUtils = interaction.client as ServerUtilsClient;
+    const MusicBox = interaction.client as MusicBoxClient;
 
-    const command = ServerUtils.commands.get(interaction.commandName);
+    const command = MusicBox.commands.get(interaction.commandName);
     if (!command) return;
 
     if (interaction.isAutocomplete()) {
         if (!command.autocomplete) return;
         try {
-            await command.autocomplete(interaction);
+            await command.autocomplete(interaction, MusicBox);
         } catch {
             console.error(`Error when autocompleting command ${interaction.commandName}`);
         }
@@ -26,17 +27,43 @@ async function handleSlashCommand(interaction: Interaction) {
             await command.run(interaction);
         } catch (error) {
             if (error instanceof BaseErrors.UserError)
-                return interaction.reply({
-                    embeds: [
-                        new EmbedBuilder()
-                            .setColor(Colors.Red)
-                            .setAuthor({
-                                name: "Error",
-                                iconURL: ServerUtils.user?.displayAvatarURL(),
-                            })
-                            .setDescription(error.message),
-                    ],
-                });
+                if (interaction.deferred) {
+                    return interaction.editReply({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor(Colors.Red)
+                                .setAuthor({
+                                    name: "Error",
+                                    iconURL: MusicBox.user?.displayAvatarURL(),
+                                })
+                                .setDescription(error.message),
+                        ],
+                    });
+                } else if (interaction.replied) {
+                    return interaction.followUp({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor(Colors.Red)
+                                .setAuthor({
+                                    name: "Error",
+                                    iconURL: MusicBox.user?.displayAvatarURL(),
+                                })
+                                .setDescription(error.message),
+                        ],
+                    });
+                } else {
+                    return interaction.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor(Colors.Red)
+                                .setAuthor({
+                                    name: "Error",
+                                    iconURL: MusicBox.user?.displayAvatarURL(),
+                                })
+                                .setDescription(error.message),
+                        ],
+                    });
+                }
 
             if (!interaction.replied)
                 interaction.reply({
@@ -48,6 +75,8 @@ async function handleSlashCommand(interaction: Interaction) {
                     content: "There was an error while executing this command",
                     ephemeral: true,
                 });
+
+            Logger.error(error);
         }
 
         return;
