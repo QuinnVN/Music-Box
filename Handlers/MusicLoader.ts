@@ -45,6 +45,7 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
         Logger.music(
             `Started playing ${track.title} in ${(await client.guilds.fetch(player.guildId)).name}`
         );
+
         channel
             .send({
                 embeds: [
@@ -74,7 +75,7 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                             },
                             {
                                 name: "Loop Mode:",
-                                value: player.loop === "none" ? "off" : player.loop,
+                                value: 'Off',
                                 inline: true,
                             }
                         )

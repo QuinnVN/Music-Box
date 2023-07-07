@@ -22,7 +22,7 @@ async function now_playingCommannd(interaction: ChatInputCommandInteraction) {
     interaction.reply({
         embeds: [
             EmbedBuilder.from(msg.embeds[0]).addFields({
-                name: "Control panel:",
+                name: "Control Panel:",
                 value: hyperlink("Click here", msg.url),
                 inline: true,
             }),

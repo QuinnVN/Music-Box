@@ -25,7 +25,7 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
     )
         throw new MusicErrors.NotInCurrentVoice();
 
-    const choice = interaction.options.getString("mode", true);
+    const choice = interaction.options.getString("mode", true).toLowerCase();
 
     if (choice !== "queue" && choice !== "track" && choice !== "none")
         throw new UserError("loop mode must be queue, track or none");
@@ -57,7 +57,7 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
                 },
                 {
                     name: "Loop Mode:",
-                    value: player.loop === "none" ? "off" : player.loop,
+                    value: choice === "none" ? "Off" : interaction.options.getString("mode", true),
                     inline: true,
                 }
             ),
@@ -84,9 +84,9 @@ export default new Command({
                 .setName("mode")
                 .setDescription("Choose your loop mode")
                 .setChoices(
-                    { name: "Repeat the current song", value: "track" },
-                    { name: "Repeat the queue", value: "queue" },
-                    { name: "Turn off repeat/loop mode", value: "none" }
+                    { name: "Repeat the current song", value: "Track" },
+                    { name: "Repeat the queue", value: "Queue" },
+                    { name: "Turn off repeat/loop mode", value: "None" }
                 )
                 .setRequired(true)
         ),
