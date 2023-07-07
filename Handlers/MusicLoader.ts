@@ -66,6 +66,16 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                                 name: "Duration",
                                 value: `${track.length ? convertTime(track.length) : "Not Found"}`,
                                 inline: true,
+                            },
+                            {
+                                name: "Volume:",
+                                value: (player.volume * 100).toString() + "%",
+                                inline: true,
+                            },
+                            {
+                                name: "Loop Mode:",
+                                value: player.loop === "none" ? "off" : player.loop,
+                                inline: true,
                             }
                         )
                         .setThumbnail(
@@ -145,6 +155,15 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                 ),
             ],
         });
+        const channel = await client.channels.fetch(player.textId);
+        if (!channel || !channel.isTextBased()) return;
+        channel.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor(config.pallete.default)
+                    .setDescription("Going offline... Goodbye!"),
+            ],
+        });
     });
 
     kazagumo.on("playerEnd", async (player) => {
@@ -197,13 +216,6 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                 (await client.guilds.fetch(player.guildId)).name
             } due to inactivity`
         );
-        channel.send({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor(config.pallete.default)
-                    .setDescription("Going offline... Goodbye!"),
-            ],
-        });
         player.destroy();
     });
 

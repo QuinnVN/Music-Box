@@ -76,7 +76,7 @@ async function handleSlashCommand(interaction: Interaction) {
                     ephemeral: true,
                 });
 
-            Logger.error(error);
+            Logger.error(error instanceof Error ? error.stack || error.message : error);
         }
 
         return;

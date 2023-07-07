@@ -18,7 +18,7 @@ async function onReady(client: Client) {
     Logger.info("Sqlite DB loaded");
 
     MusicBox.user?.setActivity({
-        name: "In closed Alpha",
+        name: "Closed Alpha Testing",
         type: ActivityType.Listening,
     });
 }

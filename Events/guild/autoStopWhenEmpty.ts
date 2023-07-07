@@ -8,19 +8,21 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
     const newChannel = newState.channel;
     //Leave the channel
     if (oldChannel && !newChannel) {
+        if (!(oldChannel.members.filter((member) => !member.user.bot).size < 1)) return;
         const player = MusicBox.musicManager.players.get(oldChannel.guild.id);
         if (!player) return;
+        if (oldChannel.id !== player.voiceId) return;
         try {
             player.queue.clear();
-            player.skip();
             player.destroy();
         } catch {}
     }
     // Switch channel
     if (oldChannel && newChannel && oldChannel.id !== newChannel.id) {
+        if (!(oldChannel.members.filter((member) => !member.user.bot).size < 1)) return;
         const player = MusicBox.musicManager.players.get(oldChannel.guild.id);
         if (!player) return;
-        if (player.voiceId !== oldChannel.id) return;
+        if (oldChannel.id !== player.voiceId) return;
         try {
             player.queue.clear();
             player.destroy();

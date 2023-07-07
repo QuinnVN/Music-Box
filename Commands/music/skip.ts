@@ -11,6 +11,12 @@ async function skipCommand(interaction: ChatInputCommandInteraction) {
     const player = MusicBox.musicManager.players.get(interaction.guild.id);
     if (!player) throw new MusicErrors.PlayerNotFound();
 
+    if (
+        player.voiceId !==
+        (await interaction.guild.members.fetch(interaction.user.id)).voice.channel?.id
+    )
+        throw new MusicErrors.NotInCurrentVoice();
+
     player.skip();
 
     interaction.reply({
