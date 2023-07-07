@@ -1,9 +1,15 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    Message,
+    SlashCommandBuilder,
+} from "discord.js";
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
 import { MusicErrors } from "../../module/errors/index.js";
 import { UserError } from "../../module/errors/base.js";
 import config from "../../config.js";
+import convertTime from "../../module/utilities/convertTime.js";
 
 async function loopCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -25,6 +31,39 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
         throw new UserError("loop mode must be queue, track or none");
 
     player.setLoop(choice);
+
+    const msg: Message = player.data.get("message");
+    msg.edit({
+        embeds: [
+            EmbedBuilder.from(msg.embeds[0]).setFields(
+                {
+                    name: "Author",
+                    value: player.queue.current?.author || "Not Found",
+                    inline: true,
+                },
+                {
+                    name: "Duration",
+                    value: `${
+                        player.queue.current?.length
+                            ? convertTime(player.queue.current?.length)
+                            : "Not Found"
+                    }`,
+                    inline: true,
+                },
+                {
+                    name: "Volume:",
+                    value: (player.volume * 100).toString() + "%",
+                    inline: true,
+                },
+                {
+                    name: "Loop Mode:",
+                    value: player.loop === "none" ? "off" : player.loop,
+                    inline: true,
+                }
+            ),
+        ],
+        components: msg.components,
+    }).then((x) => player.data.set("message", x));
 
     interaction.reply({
         embeds: [
