@@ -42,6 +42,8 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
     kazagumo.on("playerStart", async (player, track) => {
         const channel = await client.channels.cache.get(player.textId);
         if (!channel || !channel?.isTextBased()) return;
+        if (player.loop === "track") return;
+
         Logger.music(
             `Started playing ${track.title} in ${(await client.guilds.fetch(player.guildId)).name}`
         );
@@ -56,7 +58,7 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                                 "https://cdn.discordapp.com/attachments/974976339914424382/1038789602930073662/711.gif",
                             url: track.uri,
                         })
-                        .setColor("Purple")
+                        .setColor(config.pallete.default)
                         .addFields(
                             {
                                 name: "Author",
@@ -75,7 +77,7 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                             },
                             {
                                 name: "Loop Mode:",
-                                value: 'Off',
+                                value: "Off",
                                 inline: true,
                             }
                         )
@@ -85,31 +87,27 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                 ],
 
                 components: [
-                    new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ActionRowBuilder<ButtonBuilder>().setComponents(
+                        new ButtonBuilder()
+                            .setCustomId("music-previous")
+                            .setStyle(ButtonStyle.Primary)
+                            .setEmoji("<:rewindbutton:1127226249358610432>"),
+                        new ButtonBuilder()
+                            .setCustomId("music-reverse")
+                            .setStyle(ButtonStyle.Primary)
+                            .setEmoji("<:previoustrack:1127226427947884554>"),
                         new ButtonBuilder()
                             .setCustomId("music-play/pause")
-                            .setStyle(ButtonStyle.Primary)
-                            .setEmoji("⏯️"),
-
+                            .setStyle(ButtonStyle.Success)
+                            .setEmoji("<:playpause:1127228066935078982>"),
                         new ButtonBuilder()
-                            .setCustomId("music-stop")
-                            .setStyle(ButtonStyle.Danger)
-                            .setEmoji("🛑"),
-
-                        new ButtonBuilder()
-                            .setCustomId("music-vol-up")
+                            .setCustomId("music-forward")
                             .setStyle(ButtonStyle.Primary)
-                            .setEmoji("🔊"),
-
+                            .setEmoji("<:nextbutton:1127223968605143170>"),
                         new ButtonBuilder()
-                            .setCustomId("music-vol-down")
+                            .setCustomId("music-next")
                             .setStyle(ButtonStyle.Primary)
-                            .setEmoji("🔉"),
-
-                        new ButtonBuilder()
-                            .setCustomId("music-repeat")
-                            .setStyle(ButtonStyle.Primary)
-                            .setEmoji("🔁")
+                            .setEmoji("<:fastforward:1127224333878689832>")
                     ),
                 ],
             })
@@ -123,35 +121,31 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
         originalMsg.edit({
             embeds: originalMsg.embeds,
             components: [
-                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                new ActionRowBuilder<ButtonBuilder>().setComponents(
+                    new ButtonBuilder()
+                        .setCustomId("music-previous")
+                        .setStyle(ButtonStyle.Primary)
+                        .setEmoji("<:rewindbutton:1127226249358610432>")
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId("music-reverse")
+                        .setStyle(ButtonStyle.Primary)
+                        .setEmoji("<:previoustrack:1127226427947884554>")
+                        .setDisabled(true),
                     new ButtonBuilder()
                         .setCustomId("music-play/pause")
-                        .setStyle(ButtonStyle.Primary)
-                        .setEmoji("⏯️")
+                        .setStyle(ButtonStyle.Success)
+                        .setEmoji("<:playpause:1127228066935078982>")
                         .setDisabled(true),
-
                     new ButtonBuilder()
-                        .setCustomId("music-stop")
-                        .setStyle(ButtonStyle.Danger)
-                        .setEmoji("🛑")
-                        .setDisabled(true),
-
-                    new ButtonBuilder()
-                        .setCustomId("music-vol-up")
+                        .setCustomId("music-forward")
                         .setStyle(ButtonStyle.Primary)
-                        .setEmoji("🔊")
+                        .setEmoji("<:nextbutton:1127223968605143170>")
                         .setDisabled(true),
-
                     new ButtonBuilder()
-                        .setCustomId("music-vol-down")
+                        .setCustomId("music-next")
                         .setStyle(ButtonStyle.Primary)
-                        .setEmoji("🔉")
-                        .setDisabled(true),
-
-                    new ButtonBuilder()
-                        .setCustomId("music-repeat")
-                        .setStyle(ButtonStyle.Primary)
-                        .setEmoji("🔁")
+                        .setEmoji("<:fastforward:1127224333878689832>")
                         .setDisabled(true)
                 ),
             ],
@@ -168,41 +162,38 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
     });
 
     kazagumo.on("playerEnd", async (player) => {
+        if (player.loop === "track") return;
         Logger.music(`Track ended at ${(await client.guilds.fetch(player.guildId)).name}`);
         const originalMsg: Message = player.data.get("message");
         if (!originalMsg) return;
         originalMsg.edit({
             embeds: originalMsg.embeds,
             components: [
-                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                new ActionRowBuilder<ButtonBuilder>().setComponents(
+                    new ButtonBuilder()
+                        .setCustomId("music-previous")
+                        .setStyle(ButtonStyle.Primary)
+                        .setEmoji("<:rewindbutton:1127226249358610432>")
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId("music-reverse")
+                        .setStyle(ButtonStyle.Primary)
+                        .setEmoji("<:previoustrack:1127226427947884554>")
+                        .setDisabled(true),
                     new ButtonBuilder()
                         .setCustomId("music-play/pause")
-                        .setStyle(ButtonStyle.Primary)
-                        .setEmoji("⏯️")
+                        .setStyle(ButtonStyle.Success)
+                        .setEmoji("<:playpause:1127228066935078982>")
                         .setDisabled(true),
-
                     new ButtonBuilder()
-                        .setCustomId("music-stop")
-                        .setStyle(ButtonStyle.Danger)
-                        .setEmoji("🛑")
-                        .setDisabled(true),
-
-                    new ButtonBuilder()
-                        .setCustomId("music-vol-up")
+                        .setCustomId("music-forward")
                         .setStyle(ButtonStyle.Primary)
-                        .setEmoji("🔊")
+                        .setEmoji("<:nextbutton:1127223968605143170>")
                         .setDisabled(true),
-
                     new ButtonBuilder()
-                        .setCustomId("music-vol-down")
+                        .setCustomId("music-next")
                         .setStyle(ButtonStyle.Primary)
-                        .setEmoji("🔉")
-                        .setDisabled(true),
-
-                    new ButtonBuilder()
-                        .setCustomId("music-repeat")
-                        .setStyle(ButtonStyle.Primary)
-                        .setEmoji("🔁")
+                        .setEmoji("<:fastforward:1127224333878689832>")
                         .setDisabled(true)
                 ),
             ],

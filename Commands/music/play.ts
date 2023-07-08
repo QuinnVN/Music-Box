@@ -8,6 +8,7 @@ import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors, MusicErrors } from "../../module/errors/index.js";
 import { KazagumoTrack } from "kazagumo";
+import config from "../../config.js";
 async function playCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
 
@@ -35,7 +36,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
         interaction.editReply({
             embeds: [
                 new EmbedBuilder()
-                    .setColor("Purple")
+                    .setColor(config.pallete.default)
                     .setDescription(
                         res.type === "PLAYLIST"
                             ? `Added **${res.tracks.length} tracks** from **${res.playlistName}** to the queue`
@@ -64,7 +65,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
         interaction.editReply({
             embeds: [
                 new EmbedBuilder()
-                    .setColor("Purple")
+                    .setColor(config.pallete.default)
                     .setDescription(
                         res.type === "PLAYLIST"
                             ? `Added **${res.tracks.length} tracks** from **${res.playlistName}** to the queue`
