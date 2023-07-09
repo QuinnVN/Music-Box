@@ -57,7 +57,12 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                 },
                 {
                     name: "Loop Mode:",
-                    value: player.loop === "none" ? "off" : player.loop,
+                    value:
+                        player.loop === "track"
+                            ? "Track"
+                            : player.loop === "queue"
+                            ? "Queue"
+                            : "None",
                     inline: true,
                 }
             ),

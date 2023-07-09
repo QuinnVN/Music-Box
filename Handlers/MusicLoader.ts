@@ -40,7 +40,7 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
     // );
 
     kazagumo.on("playerStart", async (player, track) => {
-        const channel = await client.channels.cache.get(player.textId);
+        const channel = await client.channels.fetch(player.textId);
         if (!channel || !channel?.isTextBased()) return;
         if (player.loop === "track") return;
 
@@ -209,6 +209,27 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
             } due to inactivity`
         );
         player.destroy();
+    });
+
+    kazagumo.on("playerResolveError", async (player, track) => {
+        const channel = await client.channels.fetch(player.textId);
+        if (!channel || !channel?.isTextBased()) return;
+
+        Logger.error(
+            `There was an error while resolving track '${
+                track.title
+            }' in ${await client.guilds.fetch(player.guildId)}`
+        );
+
+        channel.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor(config.pallete.fail)
+                    .setDescription(
+                        `There was an error while resolving your requested track '${track.title}'`
+                    ),
+            ],
+        });
     });
 
     return kazagumo;
