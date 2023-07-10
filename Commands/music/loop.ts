@@ -20,19 +20,29 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
     if (!player) throw new MusicErrors.PlayerNotFound();
 
     if (
-        player.voiceId !==
+        player.voiceChannel !==
         (await interaction.guild.members.fetch(interaction.user.id)).voice.channel?.id
     )
         throw new MusicErrors.NotInCurrentVoice();
 
-    const choice = interaction.options.getString("mode", true).toLowerCase();
+    const choice = interaction.options.getString("mode", true);
+    switch (choice) {
+        case "Track": {
+            player.setTrackRepeat(true);
+            break;
+        }
+        case "Queue": {
+            player.setQueueRepeat(true);
+            break;
+        }
+        default: {
+            if (player.trackRepeat) player.setTrackRepeat(false);
+            else player.setQueueRepeat(false);
+            break;
+        }
+    }
 
-    if (choice !== "queue" && choice !== "track" && choice !== "none")
-        throw new UserError("loop mode must be queue, track or none");
-
-    player.setLoop(choice);
-
-    const msg: Message = player.data.get("message");
+    const msg: Message = player.get("message");
     msg.edit({
         embeds: [
             EmbedBuilder.from(msg.embeds[0]).setFields(
@@ -44,8 +54,8 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
                 {
                     name: "Duration",
                     value: `${
-                        player.queue.current?.length
-                            ? convertTime(player.queue.current?.length)
+                        player.queue.current?.duration
+                            ? convertTime(player.queue.current?.duration)
                             : "Not Found"
                     }`,
                     inline: true,
@@ -57,13 +67,13 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
                 },
                 {
                     name: "Loop Mode:",
-                    value: choice === "none" ? "Off" : interaction.options.getString("mode", true),
+                    value: interaction.options.getString("mode", true),
                     inline: true,
                 }
             ),
         ],
         components: msg.components,
-    }).then((x) => player.data.set("message", x));
+    }).then((x) => player.set("message", x));
 
     interaction.reply({
         embeds: [

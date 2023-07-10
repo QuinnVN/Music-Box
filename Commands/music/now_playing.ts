@@ -17,7 +17,7 @@ async function now_playingCommannd(interaction: ChatInputCommandInteraction) {
     const player = MusicBox.musicManager.players.get(interaction.guild.id);
     if (!player) throw new MusicErrors.PlayerNotFound();
 
-    const msg: Message = player.data.get("message");
+    const msg: Message = player.get("message");
 
     interaction.reply({
         embeds: [

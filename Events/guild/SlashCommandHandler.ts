@@ -65,7 +65,7 @@ async function handleSlashCommand(interaction: Interaction) {
                     });
                 }
 
-            if (!interaction.replied)
+            if (!interaction.replied || !interaction.deferred)
                 interaction.reply({
                     content: "There was an error while executing this command",
                     ephemeral: true,

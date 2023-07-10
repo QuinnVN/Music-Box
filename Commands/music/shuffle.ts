@@ -13,7 +13,7 @@ async function shuffleCommand(interaction: ChatInputCommandInteraction) {
     if (!player) throw new MusicErrors.PlayerNotFound();
 
     if (
-        player.voiceId !==
+        player.voiceChannel !==
         (await interaction.guild.members.fetch(interaction.user.id)).voice.channel?.id
     )
         throw new MusicErrors.NotInCurrentVoice();

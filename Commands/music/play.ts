@@ -7,7 +7,6 @@ import {
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors, MusicErrors } from "../../module/errors/index.js";
-import { KazagumoTrack } from "kazagumo";
 import config from "../../config.js";
 async function playCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -23,14 +22,13 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
 
     let player = MusicBox.musicManager.players.get(interaction.guild.id);
     if (player) {
-        if (player.voiceId !== vc.id) throw new MusicErrors.NotInCurrentVoice();
+        if (player.voiceChannel !== vc.id) throw new MusicErrors.NotInCurrentVoice();
 
         const res = await player.search(req, { requester: interaction.user });
         if (!res.tracks.length) throw new MusicErrors.TrackNotFound();
-        if (res.type === "PLAYLIST")
-            for (const track of res.tracks)
-                player.queue.add(new KazagumoTrack(track.getRaw(), track.author));
-        else player.queue.add(new KazagumoTrack(res.tracks[0].getRaw(), res.tracks[0].author));
+        if (res.loadType === "PLAYLIST_LOADED")
+            for (const track of res.tracks) player.queue.add(track);
+        else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
         interaction.editReply({
@@ -38,8 +36,10 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.type === "PLAYLIST"
-                            ? `Added **${res.tracks.length} tracks** from **${res.playlistName}** to the queue`
+                        res.loadType === "PLAYLIST_LOADED"
+                            ? `Added **${res.tracks.length} tracks** from **${
+                                  res.playlist?.name || "Unknown Playlist"
+                              }** to the queue`
                             : `Added **${res.tracks[0].title}** to the queue`
                     ),
             ],
@@ -48,18 +48,20 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
         const res = await MusicBox.musicManager.search(req, { requester: interaction.user });
         if (!res.tracks.length) throw new MusicErrors.TrackNotFound();
 
-        player = await MusicBox.musicManager.createPlayer({
-            guildId: interaction.guild.id,
-            textId: interaction.channelId,
-            voiceId: vc.id,
+        player = MusicBox.musicManager.create({
+            guild: interaction.guild.id,
+            textChannel: interaction.channelId,
+            voiceChannel: vc.id,
             volume: 40,
-            deaf: true,
+            selfDeafen: true,
+            instaUpdateFiltersFix: true,
         });
 
-        if (res.type === "PLAYLIST")
-            for (const track of res.tracks)
-                player.queue.add(new KazagumoTrack(track.getRaw(), track.author));
-        else player.queue.add(new KazagumoTrack(res.tracks[0].getRaw(), res.tracks[0].author));
+        if (!player.connected) player.connect();
+
+        if (res.loadType === "PLAYLIST_LOADED")
+            for (const track of res.tracks) player.queue.add(track);
+        else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
         interaction.editReply({
@@ -67,8 +69,10 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.type === "PLAYLIST"
-                            ? `Added **${res.tracks.length} tracks** from **${res.playlistName}** to the queue`
+                        res.loadType === "PLAYLIST_LOADED"
+                            ? `Added **${res.tracks.length} tracks** from **${
+                                  res.playlist?.name || "Unknown Playlist"
+                              }** to the queue`
                             : `Added **${res.tracks[0].title}** to the queue`
                     ),
             ],
@@ -82,7 +86,7 @@ async function autocompletePlayCommand(
     const focused = interaction.options.getFocused();
 
     try {
-        const res = await client.musicManager.search(focused);
+        const res = await client.musicManager.search(focused, interaction.user.id);
         const tracks = res.tracks.slice(0, 10).map((track) => ({
             name: track.title.length > 100 ? track.title.slice(0, 96) + "..." : track.title,
             value: track.title.length > 100 ? track.title.slice(0, 96) + "..." : track.title,

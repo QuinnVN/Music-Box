@@ -1,51 +1,55 @@
-import { Kazagumo } from "kazagumo";
 import MusicBoxClient from "../MusicBox.js";
-import { Connectors, NodeOption } from "shoukaku";
 import Logger from "../module/Logger.js";
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Message } from "discord.js";
 import convertTime from "../module/utilities/convertTime.js";
-import Spotify from "kazagumo-spotify";
 import config from "../config.js";
+import { Manager, NodeOptions } from "erela.js";
+import Spotify from "erela.js-spotify";
 
-export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]) {
-    const kazagumo = new Kazagumo(
-        {
-            defaultSearchEngine: "youtube",
-            plugins: [
-                new Spotify({
-                    clientId: config.spotify.clientID,
-                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
-                }),
-            ],
-            send: (guildId, payload) => {
-                const guild = client.guilds.cache.get(guildId);
-                if (guild) guild.shard.send(payload);
-            },
+export default function loadManager(client: MusicBoxClient, nodes: NodeOptions[]) {
+    const manager = new Manager({
+        defaultSearchPlatform: "ytmsearch",
+        plugins: [
+            new Spotify({
+                clientID: config.spotify.clientID,
+                clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
+            }),
+        ],
+        send: (guildId: any, payload: any) => {
+            const guild = client.guilds.cache.get(guildId);
+            if (guild) guild.shard.send(payload);
         },
-        new Connectors.DiscordJS(client),
-        nodes
-    );
+        volumeDecrementer: 0.75,
+        clientId: client.user?.id,
+        clientName: client.user?.username,
+        nodes,
+    });
 
-    kazagumo.shoukaku.on("ready", (name) => Logger.info(`Connected to Lavalink Node '${name}'`));
-    kazagumo.shoukaku.on("error", (name, error) =>
-        Logger.error(`Lavalink Node '${name}': Error Caught,`, error)
+    manager.on("nodeConnect", (node) =>
+        Logger.info(`Lavalink Node ${node.options.identifier} On ${node.options.host}: Connected`)
     );
-    kazagumo.shoukaku.on("close", (name, code, reason) =>
+    manager.on("nodeError", (node, error) =>
+        Logger.error(`Lavalink Node '${node.options.identifier}': Error Caught, `, error)
+    );
+    manager.on("nodeDisconnect", (node) => {
         Logger.warn(
-            `Lavalink Node '${name}': Closed, Code ${code}, Reason ${reason || "No reason"}`
+            `Lavalink Node ${node.options.identifier} On ${node.options.host}: disconnected`
+        );
+    });
+    manager.on("nodeReconnect", (node) =>
+        Logger.warn(
+            `Lavalink Node ${node.options.identifier} reconnecting on ${node.options.host}...`
         )
     );
-    // kazagumo.shoukaku.on("debug", (name, info) =>
-    //     Logger.log(`Lavalink Node '${name}': Debug`, info)
-    // );
+    manager.on("nodeRaw", (payload) => {});
 
-    kazagumo.on("playerStart", async (player, track) => {
-        const channel = await client.channels.fetch(player.textId);
+    manager.on("trackStart", async (player, track) => {
+        const channel = await client.channels.fetch(player.textChannel || "");
         if (!channel || !channel?.isTextBased()) return;
-        if (player.loop === "track") return;
+        if (player.trackRepeat) return;
 
         Logger.music(
-            `Started playing ${track.title} in ${(await client.guilds.fetch(player.guildId)).name}`
+            `Started playing ${track.title} in ${(await client.guilds.fetch(player.guild)).name}`
         );
 
         channel
@@ -67,7 +71,9 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                             },
                             {
                                 name: "Duration",
-                                value: `${track.length ? convertTime(track.length) : "Not Found"}`,
+                                value: `${
+                                    track.duration ? convertTime(track.duration) : "Not Found"
+                                }`,
                                 inline: true,
                             },
                             {
@@ -111,12 +117,12 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                     ),
                 ],
             })
-            .then((x) => player.data.set("message", x));
+            .then((x) => player.set("message", x));
     });
 
-    kazagumo.on("playerDestroy", async (player) => {
-        Logger.music(`Player destroyed at ${(await client.guilds.fetch(player.guildId)).name}`);
-        const originalMsg: Message = player.data.get("message");
+    manager.on("playerDestroy", async (player) => {
+        Logger.music(`Player destroyed at ${(await client.guilds.fetch(player.guild)).name}`);
+        const originalMsg: Message = player.get("message");
         if (!originalMsg) return;
         originalMsg.edit({
             embeds: originalMsg.embeds,
@@ -150,7 +156,7 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                 ),
             ],
         });
-        const channel = await client.channels.fetch(player.textId);
+        const channel = await client.channels.fetch(player.textChannel || "");
         if (!channel || !channel.isTextBased()) return;
         channel.send({
             embeds: [
@@ -161,10 +167,10 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
         });
     });
 
-    kazagumo.on("playerEnd", async (player) => {
-        if (player.loop === "track") return;
-        Logger.music(`Track ended at ${(await client.guilds.fetch(player.guildId)).name}`);
-        const originalMsg: Message = player.data.get("message");
+    manager.on("trackEnd", async (player) => {
+        if (player.trackRepeat) return;
+        Logger.music(`Track ended at ${(await client.guilds.fetch(player.guild)).name}`);
+        const originalMsg: Message = player.get("message");
         if (!originalMsg) return;
         originalMsg.edit({
             embeds: originalMsg.embeds,
@@ -200,25 +206,25 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
         });
     });
 
-    kazagumo.on("playerEmpty", async (player) => {
-        const channel = await client.channels.fetch(player.textId);
+    manager.on("queueEnd", async (player) => {
+        const channel = await client.channels.fetch(player.textChannel || "");
         if (!channel || !channel?.isTextBased()) return;
         Logger.music(
             `Destroying a player in ${
-                (await client.guilds.fetch(player.guildId)).name
+                (await client.guilds.fetch(player.guild)).name
             } due to inactivity`
         );
         player.destroy();
     });
 
-    kazagumo.on("playerResolveError", async (player, track) => {
-        const channel = await client.channels.fetch(player.textId);
+    manager.on("trackError", async (player, track) => {
+        const channel = await client.channels.fetch(player.textChannel || "");
         if (!channel || !channel?.isTextBased()) return;
 
         Logger.error(
             `There was an error while resolving track '${
                 track.title
-            }' in ${await client.guilds.fetch(player.guildId)}`
+            }' in ${await client.guilds.fetch(player.guild)}`
         );
 
         channel.send({
@@ -226,11 +232,20 @@ export default function loadKazagumo(client: MusicBoxClient, nodes: NodeOption[]
                 new EmbedBuilder()
                     .setColor(config.pallete.fail)
                     .setDescription(
-                        `There was an error while resolving your requested track '${track.title}'`
+                        `There was an error while resolving your requested track **${track.title}**`
                     ),
             ],
         });
     });
 
-    return kazagumo;
+    client.on("raw", (data) => {
+        switch (data.t) {
+            case "VOICE_SERVER_UPDATE":
+            case "VOICE_STATE_UPDATE":
+                client.musicManager.updateVoiceState(data.d);
+                break;
+        }
+    });
+
+    return manager;
 }

@@ -10,13 +10,15 @@ export default {
 
     lavalinkNodes: [
         {
-            name: "Default",
-            url: "lava1.horizxon.studio:80",
-            auth: "horizxon.studio",
+            identifier: "Default",
+            host: "hatkidllus.gremagol.xyz",
+            port: 2334,
+            password: "easypass",
+            secure: false,
         },
     ],
 
     spotify: {
-        clientID: 'fc71055b089745069cfa8154bbe7669c'
-    }
+        clientID: "fc71055b089745069cfa8154bbe7669c",
+    },
 };

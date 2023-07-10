@@ -20,7 +20,7 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
     if (!player) throw new MusicErrors.PlayerNotFound();
 
     if (
-        player.voiceId !==
+        player.voiceChannel !==
         (await interaction.guild.members.fetch(interaction.user.id)).voice.channel?.id
     )
         throw new MusicErrors.NotInCurrentVoice();
@@ -32,7 +32,7 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
 
     player.setVolume(volume);
 
-    const msg: Message = player.data.get("message");
+    const msg: Message = player.get("message");
     msg.edit({
         embeds: [
             EmbedBuilder.from(msg.embeds[0]).setFields(
@@ -44,8 +44,8 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                 {
                     name: "Duration",
                     value: `${
-                        player.queue.current?.length
-                            ? convertTime(player.queue.current?.length)
+                        player.queue.current?.duration
+                            ? convertTime(player.queue.current?.duration)
                             : "Not Found"
                     }`,
                     inline: true,
@@ -57,18 +57,13 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                 },
                 {
                     name: "Loop Mode:",
-                    value:
-                        player.loop === "track"
-                            ? "Track"
-                            : player.loop === "queue"
-                            ? "Queue"
-                            : "None",
+                    value: player.trackRepeat ? "Track" : player.queueRepeat ? "Queue" : "None",
                     inline: true,
                 }
             ),
         ],
         components: msg.components,
-    }).then((x) => player.data.set("message", x));
+    }).then((x) => player.set("message", x));
 
     interaction.reply({
         embeds: [

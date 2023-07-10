@@ -17,6 +17,11 @@ async function onReady(client: Client) {
     Logger.info(`Logged in as ${MusicBox.user?.tag}`);
     Logger.info("Sqlite DB loaded");
 
+    MusicBox.musicManager.init(client.user?.id, {
+        clientName: client.user?.username,
+        clientId: client.user?.id,
+    });
+
     MusicBox.user?.setActivity({
         name: "Closed Alpha Testing",
         type: ActivityType.Listening,

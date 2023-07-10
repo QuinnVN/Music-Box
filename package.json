@@ -17,10 +17,9 @@
         "dayjs": "^1.11.9",
         "discord.js": "^14.11.0",
         "dotenv": "^16.3.1",
-        "kazagumo": "^2.3.2",
-        "kazagumo-spotify": "^1.2.0",
-        "quick.db": "^9.1.6",
-        "shoukaku": "^3.4.0"
+        "erela.js": "github:Tomato6966/erela.js",
+        "erela.js-spotify": "^1.2.0",
+        "quick.db": "^9.1.6"
     },
     "devDependencies": {
         "@types/node": "^20.4.1",
