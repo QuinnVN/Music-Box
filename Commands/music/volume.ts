@@ -52,12 +52,16 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                 },
                 {
                     name: "Volume:",
-                    value: (player.volume * 100).toString() + "%",
+                    value: player.volume.toString() + "%",
                     inline: true,
                 },
                 {
                     name: "Loop Mode:",
-                    value: player.trackRepeat ? "Track" : player.queueRepeat ? "Queue" : "None",
+                    value: player.trackRepeat
+                        ? "🔂 Track"
+                        : player.queueRepeat
+                        ? "🔁 Queue"
+                        : "None",
                     inline: true,
                 }
             ),

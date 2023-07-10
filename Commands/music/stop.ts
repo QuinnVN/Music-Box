@@ -33,6 +33,6 @@ async function stopCommand(interaction: ChatInputCommandInteraction) {
 export default new Command({
     data: new SlashCommandBuilder()
         .setName("stop")
-        .setDescription("Stop the currently playing song"),
+        .setDescription("Stop the bot "),
     run: stopCommand,
 });

@@ -23,7 +23,7 @@ async function pauseCommand(interaction: ChatInputCommandInteraction) {
         embeds: [
             new EmbedBuilder()
                 .setColor(config.pallete.success)
-                .setDescription("Paused the current song"),
+                .setDescription(`${player.paused ? "Unpaused" : "Paused"} the current song`),
         ],
         ephemeral: true,
     });

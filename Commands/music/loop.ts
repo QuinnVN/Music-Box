@@ -27,11 +27,11 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
 
     const choice = interaction.options.getString("mode", true);
     switch (choice) {
-        case "Track": {
+        case "🔂 Track": {
             player.setTrackRepeat(true);
             break;
         }
-        case "Queue": {
+        case "🔁 Queue": {
             player.setQueueRepeat(true);
             break;
         }
@@ -62,7 +62,7 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
                 },
                 {
                     name: "Volume:",
-                    value: (player.volume * 100).toString() + "%",
+                    value: player.volume.toString() + "%",
                     inline: true,
                 },
                 {
@@ -94,8 +94,8 @@ export default new Command({
                 .setName("mode")
                 .setDescription("Choose your loop mode")
                 .setChoices(
-                    { name: "Repeat the current song", value: "Track" },
-                    { name: "Repeat the queue", value: "Queue" },
+                    { name: "Repeat the current song", value: "🔂 Track" },
+                    { name: "Repeat the queue", value: "🔁 Queue" },
                     { name: "Turn off repeat/loop mode", value: "None" }
                 )
                 .setRequired(true)

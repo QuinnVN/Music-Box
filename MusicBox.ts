@@ -7,8 +7,8 @@ import { readFileSync } from "fs";
 import config from "./config.js";
 import database from "./Handlers/DatabaseLoader.js";
 import dotenv from "dotenv";
-import loadKazagumo from "./Handlers/MusicLoader.js";
 import { Manager } from "erela.js";
+import { MusicManager } from "./Handlers/MusicLoader.js";
 const package_json = JSON.parse(readFileSync("./package.json", "utf-8"));
 dotenv.config();
 
@@ -29,7 +29,7 @@ export default class MusicBoxClient extends Client {
 
         loadEvents(this, "./Events/");
         loadCommands(this, "./Commands/");
-        this.musicManager = loadKazagumo(this, config.lavalinkNodes);
+        this.musicManager = new MusicManager(this, config.lavalinkNodes);
     }
 
     public readonly developers: string[];
