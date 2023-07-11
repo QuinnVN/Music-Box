@@ -1,6 +1,13 @@
 import MusicBoxClient from "../MusicBox.js";
 import Logger from "../module/Logger.js";
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Message } from "discord.js";
+import {
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    Message,
+    channelMention,
+} from "discord.js";
 import convertTime from "../module/utilities/convertTime.js";
 import config from "../config.js";
 import { NodeOptions, Manager } from "erela.js";
@@ -12,14 +19,15 @@ export class MusicManager extends Manager {
             nodes: nodes,
             defaultSearchPlatform: "ytmsearch",
             plugins: [
-                new Spotify({
-                    clientID: config.spotify.clientID,
-                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
-                }),
+                // new Spotify({
+                //     clientID: config.spotify.clientID,
+                //     clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
+                // }),
             ],
             volumeDecrementer: 0.75,
             clientId: client.user?.id,
             clientName: client.user?.username,
+            validUnresolvedUris: ["spotify.com"],
             send: (guildId, payload) => {
                 const guild = client.guilds.cache.get(guildId);
                 if (guild) guild.shard.send(payload);
@@ -57,6 +65,8 @@ export class MusicManager extends Manager {
                 }`
             );
 
+            console.log(track.identifier);
+
             channel
                 .send({
                     embeds: [
@@ -90,11 +100,16 @@ export class MusicManager extends Manager {
                                     name: "🔁 Loop Mode:",
                                     value: player.queueRepeat ? "🔁 Queue" : "None",
                                     inline: true,
+                                },
+                                {
+                                    name: "🎶 Current Channel:",
+                                    value: player.voiceChannel
+                                        ? channelMention(player.voiceChannel)
+                                        : "Unknown Channel",
+                                    inline: true,
                                 }
                             )
-                            .setThumbnail(
-                                `https://img.youtube.com/vi/${track.identifier}/mqdefault.jpg`
-                            ),
+                            .setThumbnail(track.thumbnail),
                     ],
 
                     components: [
@@ -110,7 +125,7 @@ export class MusicManager extends Manager {
                             new ButtonBuilder()
                                 .setCustomId("music-play/pause")
                                 .setStyle(ButtonStyle.Success)
-                                .setEmoji("<:playpause:1127228066935078982>"),
+                                .setEmoji("<:playpause:1128199382756511776>"),
                             new ButtonBuilder()
                                 .setCustomId("music-forward")
                                 .setStyle(ButtonStyle.Primary)
@@ -146,7 +161,7 @@ export class MusicManager extends Manager {
                         new ButtonBuilder()
                             .setCustomId("music-play/pause")
                             .setStyle(ButtonStyle.Success)
-                            .setEmoji("<:playpause:1127228066935078982>")
+                            .setEmoji("<:playpause:1128199382756511776>")
                             .setDisabled(true),
                         new ButtonBuilder()
                             .setCustomId("music-forward")
@@ -194,7 +209,7 @@ export class MusicManager extends Manager {
                         new ButtonBuilder()
                             .setCustomId("music-play/pause")
                             .setStyle(ButtonStyle.Success)
-                            .setEmoji("<:playpause:1127228066935078982>")
+                            .setEmoji("<:playpause:1128199382756511776>")
                             .setDisabled(true),
                         new ButtonBuilder()
                             .setCustomId("music-forward")
