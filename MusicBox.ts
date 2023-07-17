@@ -29,6 +29,7 @@ export default class MusicBoxClient extends Client {
 
         loadEvents(this, "./Events/");
         loadCommands(this, "./Commands/");
+        //@ts-ignore 
         this.musicManager = new MusicManager(this, config.lavalinkNodes);
     }
 

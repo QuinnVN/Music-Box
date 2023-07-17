@@ -1,4 +1,5 @@
 import { Colors } from "discord.js";
+import { LavalinkVersion } from "erela.js";
 
 export default {
     pallete: {

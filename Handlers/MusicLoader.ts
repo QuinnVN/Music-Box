@@ -51,7 +51,7 @@ export class MusicManager extends Manager {
             Logger.warn(
                 `Lavalink Node ${node.options.identifier} reconnecting on ${node.options.host}...`
             )
-        );
+        )
 
         this.on("trackStart", async (player, track) => {
             const channel = await client.channels.fetch(player.textChannel || "");
