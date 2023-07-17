@@ -9,7 +9,7 @@ import {
     SlashCommandBuilder,
     hyperlink,
 } from "discord.js";
-import Command from "../../module/types/Command.js";
+import Command from "../../module/structures/Command.js";
 import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import MusicBoxClient from "../../MusicBox.js";
 import convertTime from "../../module/utilities/convertTime.js";

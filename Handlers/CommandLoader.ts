@@ -1,6 +1,6 @@
 import { lstatSync, readdirSync } from "fs";
 import MusicBoxClient from "../MusicBox.js";
-import Command from "../module/types/Command.js";
+import Command from "../module/structures/Command.js";
 //@ts-ignore
 import AsciiTable from "ascii-table";
 export const CommandTable = new AsciiTable("Commands").setHeading("", "Name", "Status", "Note");

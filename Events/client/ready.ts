@@ -1,6 +1,6 @@
 import { ActivityType, Client, Events, SlashCommandBuilder } from "discord.js";
 import MusicBoxClient from "../../MusicBox.js";
-import Event from "../../module/types/Events.js";
+import Event from "../../module/structures/Events.js";
 import { EventTable } from "../../Handlers/EventHandler.js";
 import { CommandTable } from "../../Handlers/CommandLoader.js";
 import Logger from "../../module/Logger.js";

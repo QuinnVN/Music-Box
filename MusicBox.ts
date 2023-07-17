@@ -1,7 +1,7 @@
 import { QuickDB } from "quick.db";
 import { Client, ClientOptions, GatewayIntentBits } from "discord.js";
 import loadCommands from "./Handlers/CommandLoader.js";
-import Command from "./module/types/Command.js";
+import Command from "./module/structures/Command.js";
 import loadEvents from "./Handlers/EventHandler.js";
 import { readFileSync } from "fs";
 import config from "./config.js";

@@ -1,7 +1,7 @@
 import { EmbedBuilder, Events, Interaction } from "discord.js";
-import Event from "../../module/types/Events.js";
+import Event from "../../module/structures/Events.js";
 import config from "../../config.js";
-import MusicBoxClient from "../../MusicBox.js"
+import MusicBoxClient from "../../MusicBox.js";
 
 async function musicButtonsHandler(interaction: Interaction) {
     if (!interaction.isButton()) return;

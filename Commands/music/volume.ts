@@ -5,10 +5,10 @@ import {
     SlashCommandBuilder,
     channelMention,
 } from "discord.js";
-import Command from "../../module/types/Command.js";
+import Command from "../../module/structures/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
 import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
-import { UserError } from "../../module/errors/base.js";
+import { UserError, UserInputError } from "../../module/errors/base.js";
 import config from "../../config.js";
 import convertTime from "../../module/utilities/convertTime.js";
 
@@ -28,8 +28,7 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
 
     const volume = interaction.options.getNumber("level") || 40;
 
-    if (volume < 0 || volume > 150)
-        throw new UserError("Your chosen volume is too high/low (Max: 150 | Min: 0)");
+    if (volume < 0 || volume > 150) throw new UserInputError("Input > 0 && Input < 150");
 
     player.setVolume(volume);
 

@@ -35,3 +35,9 @@ export class NoSongInQueue extends UserError {
         super("There're no song in queue!");
     }
 }
+
+export class NoPreviousSong extends UserError {
+    constructor() {
+        super("You don't have any previous song!");
+    }
+}

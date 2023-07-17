@@ -1,5 +1,5 @@
 import { Events, VoiceState } from "discord.js";
-import Event from "../../module/types/Events.js";
+import Event from "../../module/structures/Events.js";
 import MusicBoxClient from "../../MusicBox.js";
 
 async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {

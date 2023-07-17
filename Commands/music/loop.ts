@@ -5,7 +5,7 @@ import {
     SlashCommandBuilder,
     channelMention,
 } from "discord.js";
-import Command from "../../module/types/Command.js";
+import Command from "../../module/structures/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
 import config from "../../config.js";
 import convertTime from "../../module/utilities/convertTime.js";

@@ -1,5 +1,5 @@
 import { Colors, EmbedBuilder, Events, Interaction } from "discord.js";
-import Event from "../../module/types/Events.js";
+import Event from "../../module/structures/Events.js";
 import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors } from "../../module/errors/index.js";
 import Logger from "../../module/Logger.js";
@@ -36,7 +36,12 @@ async function handleSlashCommand(interaction: Interaction) {
                                     name: "Error",
                                     iconURL: MusicBox.user?.displayAvatarURL(),
                                 })
-                                .setDescription(error.message),
+                                .setDescription(
+                                    error.message +
+                                        (error instanceof BaseErrors.UserInputError
+                                            ? `\n\`\`\`${error.params}\`\`\``
+                                            : "")
+                                ),
                         ],
                     });
                 } else if (interaction.replied) {

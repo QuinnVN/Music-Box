@@ -12,7 +12,7 @@ import {
     WebhookClient,
     time,
 } from "discord.js";
-import Command from "../../module/types/Command.js";
+import Command from "../../module/structures/Command.js";
 import config from "../../config.js";
 import { UserError } from "../../module/errors/base.js";
 import MusicBoxClient from "../../MusicBox.js";

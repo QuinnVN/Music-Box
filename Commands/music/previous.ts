@@ -1,9 +1,10 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import Command from "../../module/structures/Command.js";
-import MusicBoxClient from "../../MusicBox.js";
 import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
+import MusicBoxClient from "../../MusicBox.js";
 import config from "../../config.js";
-async function pauseCommand(interaction: ChatInputCommandInteraction) {
+
+async function previousCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
@@ -11,27 +12,22 @@ async function pauseCommand(interaction: ChatInputCommandInteraction) {
     const player = MusicBox.musicManager.players.get(interaction.guild.id);
     if (!player) throw new MusicErrors.PlayerNotFound();
 
-    if (
-        player.voiceChannel !==
-        (await interaction.guild.members.fetch(interaction.user.id)).voice.channel?.id
-    )
-        throw new MusicErrors.NotInCurrentVoice();
+    if (!player.queue.previous) throw new MusicErrors.NoPreviousSong();
 
-    player.pause(!player.paused);
+    player.queue.unshift(player.queue.previous);
+    player.stop();
 
     interaction.reply({
         embeds: [
             new EmbedBuilder()
                 .setColor(config.pallete.success)
-                .setDescription(`${player.paused ? "Paused" : "Unpaused"} the current song`),
+                .setDescription("Playing your previous song..."),
         ],
         ephemeral: true,
     });
 }
 
 export default new Command({
-    data: new SlashCommandBuilder()
-        .setName("pause")
-        .setDescription("Pause/Resume the current song"),
-    run: pauseCommand,
+    data: new SlashCommandBuilder().setName("previous").setDescription("Play the previous song"),
+    run: previousCommand,
 });

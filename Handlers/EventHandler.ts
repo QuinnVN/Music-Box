@@ -1,6 +1,6 @@
 import { lstatSync, readdirSync } from "fs";
 import MusicBoxClient from "../MusicBox.js";
-import Event from "../module/types/Events.js";
+import Event from "../module/structures/Events.js";
 //@ts-ignore
 import AsciiTable from "ascii-table";
 export const EventTable = new AsciiTable("Events").setHeading("", "Name", "Status", "Note");

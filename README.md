@@ -1,5 +1,5 @@
-# Music Box Discord bot
+# Music Box Discord Bot
 
-This is the repository for the Music Box discord bot
+This is the repository for the Music Box Discord Bot
 
-Currently in Closed Alpha testing
+Currently in Open Beta Testing
