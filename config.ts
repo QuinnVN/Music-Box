@@ -11,10 +11,12 @@ export default {
     lavalinkNodes: [
         {
             identifier: "Default",
-            host: "hatkidllus.gremagol.xyz",
-            port: 2334,
-            password: "easypass",
+            host: "45.126.127.170",
+            port: 443,
+            password: "bot",
             secure: false,
+            version: "v4",
+            useVersionPath: true,
         },
     ],
 

@@ -1,10 +1,10 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
-import { MusicErrors } from "../../module/errors/index.js";
+import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import config from "../../config.js";
 async function pauseCommand(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guild) return;
+    if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
 
@@ -23,7 +23,7 @@ async function pauseCommand(interaction: ChatInputCommandInteraction) {
         embeds: [
             new EmbedBuilder()
                 .setColor(config.pallete.success)
-                .setDescription(`${player.paused ? "Unpaused" : "Paused"} the current song`),
+                .setDescription(`${player.paused ? "Paused" : "Unpaused"} the current song`),
         ],
         ephemeral: true,
     });

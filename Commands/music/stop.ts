@@ -1,11 +1,11 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
-import { MusicErrors } from "../../module/errors/index.js";
+import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import config from "../../config.js";
 
 async function stopCommand(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guild) return;
+    if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
 

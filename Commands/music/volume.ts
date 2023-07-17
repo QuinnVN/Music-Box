@@ -3,16 +3,17 @@ import {
     EmbedBuilder,
     Message,
     SlashCommandBuilder,
+    channelMention,
 } from "discord.js";
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
-import { MusicErrors } from "../../module/errors/index.js";
+import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import { UserError } from "../../module/errors/base.js";
 import config from "../../config.js";
 import convertTime from "../../module/utilities/convertTime.js";
 
 async function volumeCommand(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guild) return;
+    if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
 
@@ -62,6 +63,13 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                         : player.queueRepeat
                         ? "🔁 Queue"
                         : "None",
+                    inline: true,
+                },
+                {
+                    name: "🎶 Current Channel:",
+                    value: player.voiceChannel
+                        ? channelMention(player.voiceChannel)
+                        : "Unknown Channel",
                     inline: true,
                 }
             ),

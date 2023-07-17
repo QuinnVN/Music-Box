@@ -17,7 +17,7 @@ export class MusicManager extends Manager {
     constructor(client: MusicBoxClient, nodes: NodeOptions[]) {
         super({
             nodes: nodes,
-            defaultSearchPlatform: "ytmsearch",
+            defaultSearchPlatform: "ytsearch",
             plugins: [
                 // new Spotify({
                 //     clientID: config.spotify.clientID,
@@ -64,8 +64,6 @@ export class MusicManager extends Manager {
                     (await client.guilds.fetch(player.guild)).name
                 }`
             );
-
-            console.log(track.identifier);
 
             channel
                 .send({

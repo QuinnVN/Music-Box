@@ -1,7 +1,7 @@
 import { EmbedBuilder, Events, Interaction } from "discord.js";
 import Event from "../../module/types/Events.js";
 import config from "../../config.js";
-import MusicBoxClient from "../../MusicBox.js";
+import MusicBoxClient from "../../MusicBox.js"
 
 async function musicButtonsHandler(interaction: Interaction) {
     if (!interaction.isButton()) return;
@@ -13,6 +13,20 @@ async function musicButtonsHandler(interaction: Interaction) {
     const player = MusicBox.musicManager.players.get(interaction.guild.id);
     if (!player) return;
 
+    console.log(player.queue.current?.requester);
+
+    if (player.queue.current?.requester !== interaction.user.id)
+        return interaction.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor(config.pallete.fail)
+                    .setDescription(
+                        "You're not the requester of this song so you can't interact with it!"
+                    ),
+            ],
+            ephemeral: true,
+        });
+
     switch (interaction.customId.split("-")[1]) {
         case "play/pause": {
             player.pause(!player.paused);
@@ -22,7 +36,7 @@ async function musicButtonsHandler(interaction: Interaction) {
                     new EmbedBuilder()
                         .setColor(config.pallete.success)
                         .setDescription(
-                            `${player.paused ? "Unpaused" : "Paused"} the current song`
+                            `${player.paused ? "Paused" : "Unpaused"} the current song`
                         ),
                 ],
                 ephemeral: true,

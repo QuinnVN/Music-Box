@@ -7,10 +7,10 @@ import {
 } from "discord.js";
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
-import { MusicErrors } from "../../module/errors/index.js";
+import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
 
 async function now_playingCommannd(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guild) return;
+    if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
 

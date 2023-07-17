@@ -6,10 +6,10 @@ import {
 } from "discord.js";
 import Command from "../../module/types/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
-import { BaseErrors, MusicErrors } from "../../module/errors/index.js";
+import { BaseErrors, GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import config from "../../config.js";
 async function playCommand(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guild) return;
+    if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
 
@@ -24,10 +24,9 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
     if (player) {
         if (player.voiceChannel !== vc.id) throw new MusicErrors.NotInCurrentVoice();
 
-        const res = await player.search(req, { requester: interaction.user });
-        if (!res.tracks.length) throw new MusicErrors.TrackNotFound();
-        if (res.loadType === "PLAYLIST_LOADED")
-            for (const track of res.tracks) player.queue.add(track);
+        const res = await player.search(req, interaction.user.id);
+        if (!res.tracks.length || res.tracks[0] === null) throw new MusicErrors.TrackNotFound();
+        if (res.loadType === "playlist") for (const track of res.tracks) player.queue.add(track);
         else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
@@ -36,7 +35,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.loadType === "PLAYLIST_LOADED"
+                        res.loadType === "playlist"
                             ? `Added **${res.tracks.length} tracks** from **${
                                   res.playlist?.name || "Unknown Playlist"
                               }** to the queue`
@@ -45,8 +44,8 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
             ],
         });
     } else {
-        const res = await MusicBox.musicManager.search(req, { requester: interaction.user });
-        if (!res.tracks.length) throw new MusicErrors.TrackNotFound();
+        const res = await MusicBox.musicManager.search(req, interaction.user.id);
+        if (!res.tracks.length || res.tracks[0] === null) throw new MusicErrors.TrackNotFound();
 
         player = MusicBox.musicManager.create({
             guild: interaction.guild.id,
@@ -59,8 +58,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
 
         if (!player.connected) player.connect();
 
-        if (res.loadType === "PLAYLIST_LOADED")
-            for (const track of res.tracks) player.queue.add(track);
+        if (res.loadType === "playlist") for (const track of res.tracks) player.queue.add(track);
         else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
@@ -69,7 +67,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.loadType === "PLAYLIST_LOADED"
+                        res.loadType === "playlist"
                             ? `Added **${res.tracks.length} tracks** from **${
                                   res.playlist?.name || "Unknown Playlist"
                               }** to the queue`
@@ -89,7 +87,7 @@ async function autocompletePlayCommand(
         const res = await client.musicManager.search(focused, interaction.user.id);
         const tracks = res.tracks.slice(0, 10).map((track) => ({
             name: track.title.length > 100 ? track.title.slice(0, 96) + "..." : track.title,
-            value: track.title.length > 100 ? track.title.slice(0, 96) + "..." : track.title,
+            value: track.uri,
         }));
 
         await interaction.respond(tracks);
