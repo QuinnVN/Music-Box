@@ -34,3 +34,6 @@ test.png
 
 # DB
 Data/
+
+# env
+.env
