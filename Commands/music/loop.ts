@@ -47,12 +47,12 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
         embeds: [
             EmbedBuilder.from(msg.embeds[0]).setFields(
                 {
-                    name: "Author",
+                    name: "🙍‍♂️ Author",
                     value: player.queue.current?.author || "Not Found",
                     inline: true,
                 },
                 {
-                    name: "Duration",
+                    name: "⏱️ Duration",
                     value: `${
                         player.queue.current?.duration
                             ? convertTime(player.queue.current?.duration)
@@ -61,20 +61,25 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
                     inline: true,
                 },
                 {
-                    name: "Volume:",
+                    name: "🔈 Volume:",
                     value: player.volume.toString() + "%",
                     inline: true,
                 },
                 {
-                    name: "Loop Mode:",
-                    value: interaction.options.getString("mode", true),
+                    name: "🔁 Loop Mode:",
+                    value: choice,
                     inline: true,
                 },
                 {
-                    name: "🎶 Current Channel:",
+                    name: "🎶 Music Channel:",
                     value: player.voiceChannel
                         ? channelMention(player.voiceChannel)
                         : "Unknown Channel",
+                    inline: true,
+                },
+                {
+                    name: "🎛️ Filters:",
+                    value: `\`${player.get("activefilter") || "None"}\``,
                     inline: true,
                 }
             ),
@@ -93,6 +98,9 @@ async function loopCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder()
         .setName("loop")
         .setDescription("Toggle loop modes")

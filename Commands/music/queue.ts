@@ -66,10 +66,12 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
                 ),
             ],
             fetchReply: true,
+            ephemeral: true,
         });
     } else {
         interaction.reply({
             embeds: [embeds[0]],
+            ephemeral: true,
         });
     }
 
@@ -79,18 +81,14 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
         time: ms("15m"),
     });
 
-    console.log(embeds);
-
     let currentPage = 0;
     collector.on("collect", (i) => {
         i.deferUpdate();
 
         if (i.customId.split("-")[1] === "next") {
             currentPage++;
-            console.log(currentPage);
-            console.log(embeds[currentPage]);
             if (currentPage === pages - 1)
-                msg?.edit({
+                interaction.editReply({
                     embeds: [embeds[currentPage]],
                     components: [
                         new ActionRowBuilder<ButtonBuilder>().setComponents(
@@ -108,7 +106,7 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
                     ],
                 });
             else
-                msg?.edit({
+                interaction.editReply({
                     embeds: [embeds[currentPage]],
                     components: [
                         new ActionRowBuilder<ButtonBuilder>().setComponents(
@@ -126,10 +124,8 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
                 });
         } else {
             currentPage--;
-            console.log(currentPage);
-            console.log(embeds[currentPage]);
             if (currentPage === 0)
-                msg?.edit({
+                interaction.editReply({
                     embeds: [embeds[currentPage]],
                     components: [
                         new ActionRowBuilder<ButtonBuilder>().setComponents(
@@ -146,14 +142,14 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
                         ),
                     ],
                 });
-            else msg?.edit({ embeds: [embeds[currentPage]] });
+            else interaction.editReply({ embeds: [embeds[currentPage]] });
         }
     });
 
     collector.on("end", (collected, reason) => {
-        msg?.edit({
+        interaction.editReply({
             content: "Menu has been disabled",
-            embeds: msg.embeds,
+            embeds: msg?.embeds,
             components: [
                 new ActionRowBuilder<ButtonBuilder>().setComponents(
                     new ButtonBuilder()
@@ -174,6 +170,9 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder().setName("queue").setDescription("View the current queue"),
     run: queueCommand,
 });

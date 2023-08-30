@@ -18,6 +18,8 @@ async function stopCommand(interaction: ChatInputCommandInteraction) {
     )
         throw new MusicErrors.NotInCurrentVoice();
 
+    player.setTrackRepeat(false);
+    player.setQueueRepeat(false);
     player.queue.clear();
     player.stop();
 
@@ -32,6 +34,9 @@ async function stopCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder().setName("stop").setDescription("Stop the bot "),
     run: stopCommand,
 });

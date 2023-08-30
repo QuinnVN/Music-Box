@@ -5,14 +5,14 @@ export default class Logger {
     static log(...text: unknown[]) {
         const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
 
-        console.log(`[${chalk.gray(date)}] ${chalk.blueBright("[LOG]")} ${text.toString()}`);
+        console.log(`[${chalk.gray(date)}] ${chalk.blueBright.bold("[LOG]")} ${text.toString()}`);
     }
 
     static info(...text: unknown[]) {
         const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
 
         console.log(
-            `[${chalk.gray(date)}] ${chalk.greenBright("[INFO]")} ${chalk.green(text.toString())}`
+            `[${chalk.gray(date)}] ${chalk.greenBright.bold("[INFO]")} ${chalk.green(text.toString())}`
         );
     }
 
@@ -20,7 +20,9 @@ export default class Logger {
         const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
 
         console.log(
-            `[${chalk.gray(date)}] ${chalk.yellowBright("[WARN]")} ${chalk.yellow(text.toString())}`
+            `[${chalk.gray(date)}] ${chalk.yellowBright.bold("[WARN]")} ${chalk.yellow(
+                text.toString()
+            )}`
         );
     }
 
@@ -28,7 +30,7 @@ export default class Logger {
         const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
 
         console.log(
-            `[${chalk.gray(date)}] ${chalk.redBright("[ERROR]")} ${chalk.red(text.toString())}`
+            `[${chalk.gray(date)}] ${chalk.redBright.bold("[ERROR]")} ${chalk.red(text.toString())}`
         );
     }
 
@@ -36,7 +38,7 @@ export default class Logger {
         const date = dayjs().format("DD/MM/YYYY hh:mm:ss");
 
         console.log(
-            `[${chalk.gray(date)}] ${chalk.magentaBright("[MUSIC]")} ${chalk.magenta(
+            `[${chalk.gray(date)}] ${chalk.magentaBright.bold("[MUSIC]")} ${chalk.magenta(
                 text.toString()
             )}`
         );

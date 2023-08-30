@@ -1,9 +1,11 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import Command from "../../module/structures/Command.js";
-import MusicBoxClient from "../../MusicBox.js";
 import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
+import MusicBoxClient from "../../MusicBox.js";
+import { UserInputError } from "../../module/errors/base.js";
 import config from "../../config.js";
-async function pauseCommand(interaction: ChatInputCommandInteraction) {
+import ordinal_suffix_of from "../../module/utilities/ordinaSuffix.js";
+async function skipToCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
@@ -17,13 +19,19 @@ async function pauseCommand(interaction: ChatInputCommandInteraction) {
     )
         throw new MusicErrors.NotInCurrentVoice();
 
-    player.pause(!player.paused);
+    const songIndex = interaction.options.getNumber("position", true);
+    if (songIndex < 1 || songIndex > player.queue.length)
+        throw new UserInputError("Selected song position is not in the queue!");
+
+    player.stop(songIndex);
 
     interaction.reply({
         embeds: [
             new EmbedBuilder()
                 .setColor(config.pallete.success)
-                .setDescription(`${player.paused ? "Paused" : "Unpaused"} the current song`),
+                .setDescription(
+                    `Skipped to the ${ordinal_suffix_of(songIndex)} song in the queue!`
+                ),
         ],
         ephemeral: true,
     });
@@ -34,7 +42,13 @@ export default new Command({
         catergory: "🎵 Music",
     },
     data: new SlashCommandBuilder()
-        .setName("pause")
-        .setDescription("Pause/Resume the current song"),
-    run: pauseCommand,
+        .setName("skipto")
+        .setDescription("Skip to a song in the queue")
+        .addNumberOption((options) =>
+            options
+                .setName("position")
+                .setDescription("The position of the song in queue")
+                .setRequired(true)
+        ),
+    run: skipToCommand,
 });

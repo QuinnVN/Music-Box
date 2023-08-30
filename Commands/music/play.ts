@@ -9,6 +9,7 @@ import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors, GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import config from "../../config.js";
 async function playCommand(interaction: ChatInputCommandInteraction) {
+    console.log(interaction.options.data);
     if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
@@ -26,7 +27,8 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
 
         const res = await player.search(req, interaction.user.id);
         if (!res.tracks.length || res.tracks[0] === null) throw new MusicErrors.TrackNotFound();
-        if (res.loadType === "playlist") for (const track of res.tracks) player.queue.add(track);
+        if (res.loadType === "PLAYLIST_LOADED")
+            for (const track of res.tracks) player.queue.add(track);
         else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
@@ -35,7 +37,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.loadType === "playlist"
+                        res.loadType === "PLAYLIST_LOADED"
                             ? `Added **${res.tracks.length} tracks** from **${
                                   res.playlist?.name || "Unknown Playlist"
                               }** to the queue`
@@ -58,7 +60,8 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
 
         if (!player.connected) player.connect();
 
-        if (res.loadType === "playlist") for (const track of res.tracks) player.queue.add(track);
+        if (res.loadType === "PLAYLIST_LOADED")
+            for (const track of res.tracks) player.queue.add(track);
         else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
@@ -67,7 +70,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.loadType === "playlist"
+                        res.loadType === "PLAYLIST_LOADED"
                             ? `Added **${res.tracks.length} tracks** from **${
                                   res.playlist?.name || "Unknown Playlist"
                               }** to the queue`
@@ -94,13 +97,16 @@ async function autocompletePlayCommand(
     } catch {}
 }
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder()
         .setName("play")
         .setDescription("Search and play music")
         .addStringOption((options) =>
             options
                 .setName("prompt")
-                .setDescription("Name of the song")
+                .setDescription("Name/link of the song")
                 .setAutocomplete(true)
                 .setRequired(true)
         ),

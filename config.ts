@@ -1,5 +1,4 @@
 import { Colors } from "discord.js";
-import { LavalinkVersion } from "erela.js";
 
 export default {
     pallete: {
@@ -12,16 +11,18 @@ export default {
     lavalinkNodes: [
         {
             identifier: "Default",
-            host: "45.126.127.170",
-            port: 443,
-            password: "bot",
+            host: "hatkidll.gremagol.xyz",
+            port: 2334,
+            password: "easypass",
             secure: false,
-            version: "v4",
-            useVersionPath: true,
+            // version: "v4" as const,
+            // useVersionPath: true,
         },
     ],
 
+    dataDirectory: "./Data",
+
     spotify: {
-        clientID: "fc71055b089745069cfa8154bbe7669c",
+        clientID: "", //"fc71055b089745069cfa8154bbe7669c",
     },
 };

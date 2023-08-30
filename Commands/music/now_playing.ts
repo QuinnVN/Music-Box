@@ -22,7 +22,7 @@ async function now_playingCommannd(interaction: ChatInputCommandInteraction) {
     interaction.reply({
         embeds: [
             EmbedBuilder.from(msg.embeds[0]).addFields({
-                name: "Control Panel:",
+                name: "🌐 Control Panel:",
                 value: hyperlink("Click here", msg.url),
                 inline: true,
             }),
@@ -32,6 +32,9 @@ async function now_playingCommannd(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder()
         .setName("now_playing")
         .setDescription("Show infomation about the currently playing song"),

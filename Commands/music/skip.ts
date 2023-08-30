@@ -30,6 +30,9 @@ async function skipCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder().setName("skip").setDescription("Skip the current song"),
     run: skipCommand,
 });

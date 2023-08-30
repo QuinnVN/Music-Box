@@ -1,30 +1,32 @@
 {
     "name": "musicbox",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "module": "MusicBox.ts",
     "type": "module",
     "scripts": {
         "dev": "tsx watch MusicBox",
         "start": "tsx MusicBox",
         "build": "tsc",
-        "init": "npm i && mkdir Data",
-        "prod": "npm ci && mkdir Data"
+        "init": "npm i",
+        "prod": "npm ci"
     },
     "dependencies": {
         "@types/ms": "^0.7.31",
-        "ascii-table": "^0.0.9",
         "better-sqlite3": "^8.4.0",
-        "chalk": "^5.3.0",
         "dayjs": "^1.11.9",
-        "discord.js": "^14.11.0",
+        "discord.js": "^14.13.0",
         "dotenv": "^16.3.1",
         "erela.js": "github:Tomato6966/erela.js",
         "erela.js-spotify": "^1.2.0",
+        "fast-glob": "^3.3.0",
         "ms": "^2.1.3",
         "quick.db": "^9.1.6"
     },
     "devDependencies": {
         "@types/node": "^20.4.1",
+        "ascii-table3": "^0.8.2",
+        "chalk": "^5.3.0",
+        "ora": "^6.3.1",
         "tsx": "^3.12.7",
         "typescript": "^5.1.6"
     }

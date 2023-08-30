@@ -31,6 +31,9 @@ async function shuffleCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder().setName("shuffle").setDescription("Shuffle the current queue"),
     run: shuffleCommand,
 });

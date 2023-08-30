@@ -13,8 +13,6 @@ async function musicButtonsHandler(interaction: Interaction) {
     const player = MusicBox.musicManager.players.get(interaction.guild.id);
     if (!player) return;
 
-    console.log(player.queue.current?.requester);
-
     if (player.queue.current?.requester !== interaction.user.id)
         return interaction.reply({
             embeds: [

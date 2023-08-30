@@ -6,28 +6,24 @@ import MusicBoxClient from "../../MusicBox.js";
 async function pingCommand(interaction: ChatInputCommandInteraction) {
     const MusicBox = interaction.client as MusicBoxClient;
 
-    const msg = await interaction.deferReply({fetchReply: true})
+    const msg = await interaction.deferReply({ fetchReply: true });
 
     const msgPing = msg.createdTimestamp - interaction.createdTimestamp;
 
     interaction.editReply({
-        content: "",
         embeds: [
             new EmbedBuilder()
                 .setColor(config.pallete.default)
-                .setAuthor({
-                    name: "Network Infomation",
-                    iconURL: MusicBox.user?.displayAvatarURL(),
-                })
+                .setTitle("🌐 Network Infomation")
                 .setFields(
                     {
-                        name: "📡 Bot to Discord Latency:",
-                        value: MusicBox.ws.ping.toString() + 'ms',
+                        name: "📡 API Latency:",
+                        value: "⨽ `" + MusicBox.ws.ping.toString() + "ms`",
                         inline: true,
                     },
                     {
-                        name: "📶 Bot to You Latency:",
-                        value: msgPing.toString() + 'ms',
+                        name: "📶 Bot Latency:",
+                        value: "⨽ `" + msgPing.toString() + "ms`",
                         inline: true,
                     }
                 ),
@@ -36,6 +32,9 @@ async function pingCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: '📑 Info'
+    },
     data: new SlashCommandBuilder().setName("ping").setDescription("Show bot's network infomation"),
     run: pingCommand,
 });

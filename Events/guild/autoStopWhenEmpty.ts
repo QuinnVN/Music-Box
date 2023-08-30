@@ -14,7 +14,7 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
         if (oldChannel.id !== player.voiceChannel) return;
         try {
             player.queue.clear();
-            player.destroy();
+            player.stop();
         } catch {}
     }
     // Switch channel
@@ -25,7 +25,8 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
         if (oldChannel.id !== player.voiceChannel) return;
         try {
             player.queue.clear();
-            player.destroy();
+            player.stop();
+            
         } catch {}
     }
 }

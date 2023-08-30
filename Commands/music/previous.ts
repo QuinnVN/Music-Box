@@ -28,6 +28,9 @@ async function previousCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder().setName("previous").setDescription("Play the previous song"),
     run: previousCommand,
 });

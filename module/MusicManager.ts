@@ -1,5 +1,6 @@
+import chalk from "chalk";
 import MusicBoxClient from "../MusicBox.js";
-import Logger from "../module/Logger.js";
+import Logger from "./Logger.js";
 import {
     EmbedBuilder,
     ActionRowBuilder,
@@ -8,55 +9,82 @@ import {
     Message,
     channelMention,
 } from "discord.js";
-import convertTime from "../module/utilities/convertTime.js";
+import convertTime from "./utilities/convertTime.js";
 import config from "../config.js";
 import { NodeOptions, Manager } from "erela.js";
 import Spotify from "erela.js-spotify";
 
 export class MusicManager extends Manager {
     constructor(client: MusicBoxClient, nodes: NodeOptions[]) {
-        super({
-            nodes: nodes,
-            defaultSearchPlatform: "ytsearch",
-            plugins: [
-                // new Spotify({
-                //     clientID: config.spotify.clientID,
-                //     clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
-                // }),
-            ],
-            volumeDecrementer: 0.75,
-            clientId: client.user?.id,
-            clientName: client.user?.username,
-            validUnresolvedUris: ["spotify.com"],
-            send: (guildId, payload) => {
-                const guild = client.guilds.cache.get(guildId);
-                if (guild) guild.shard.send(payload);
-            },
-        });
+        if (
+            process.env.SPOTIFY_CLIENT_SECRET &&
+            config.spotify.clientID.length > 0 &&
+            process.env.SPOTIFY_CLIENT_SECRET.length > 0
+        ) {
+            super({
+                nodes: nodes,
+                defaultSearchPlatform: "ytsearch",
+                plugins: [
+                    // new Spotify({
+                    //     clientID: config.spotify.clientID,
+                    //     clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "",
+                    // }),
+                ],
+                volumeDecrementer: 0.75,
+                clientId: client.user?.id,
+                clientName: client.user?.username,
+                validUnresolvedUris: ["spotify.com"],
+                send: (guildId, payload) => {
+                    const guild = client.guilds.cache.get(guildId);
+                    if (guild) guild.shard.send(payload);
+                },
+            });
+        } else
+            super({
+                nodes: nodes,
+                defaultSearchPlatform: "ytsearch",
+                plugins: [],
+                volumeDecrementer: 0.75,
+                clientId: client.user?.id,
+                clientName: client.user?.username,
+                send: (guildId, payload) => {
+                    const guild = client.guilds.cache.get(guildId);
+                    if (guild) guild.shard.send(payload);
+                },
+            });
 
         this.on("nodeConnect", (node) =>
             Logger.info(
-                `Lavalink Node ${node.options.identifier} On ${node.options.host}: Connected`
+                `Lavalink Node ${chalk.bold(node.options.identifier)} On ${chalk.underline(
+                    node.options.host
+                )}: Connected`
             )
         );
         this.on("nodeError", (node, error) =>
-            Logger.error(`Lavalink Node '${node.options.identifier}': Error Caught, `, error)
+            Logger.error(
+                `Lavalink Node '${chalk.bold(node.options.identifier)}': Error Caught, `,
+                error
+            )
         );
         this.on("nodeDisconnect", (node) => {
             Logger.warn(
-                `Lavalink Node ${node.options.identifier} On ${node.options.host}: disconnected`
+                `Lavalink Node ${chalk.bold(node.options.identifier)} On ${chalk.underline(
+                    node.options.host
+                )}: disconnected`
             );
         });
         this.on("nodeReconnect", (node) =>
             Logger.warn(
-                `Lavalink Node ${node.options.identifier} reconnecting on ${node.options.host}...`
+                `Lavalink Node ${chalk.bold(
+                    node.options.identifier
+                )} reconnecting on ${chalk.underline(node.options.host)}...`
             )
-        )
+        );
 
         this.on("trackStart", async (player, track) => {
             const channel = await client.channels.fetch(player.textChannel || "");
             if (!channel || !channel?.isTextBased()) return;
-            if (player.trackRepeat) return;
+            if (player.trackRepeat || (player.queueRepeat && player.queue.length === 0)) return;
 
             Logger.music(
                 `Started playing ${track.title} in ${
@@ -99,10 +127,15 @@ export class MusicManager extends Manager {
                                     inline: true,
                                 },
                                 {
-                                    name: "🎶 Current Channel:",
+                                    name: "🎶 Music Channel:",
                                     value: player.voiceChannel
                                         ? channelMention(player.voiceChannel)
                                         : "Unknown Channel",
+                                    inline: true,
+                                },
+                                {
+                                    name: "🎛️ Filters:",
+                                    value: `\`${player.get("activefilter") || "None"}\``,
                                     inline: true,
                                 }
                             )
@@ -110,7 +143,7 @@ export class MusicManager extends Manager {
                     ],
 
                     components: [
-                        new ActionRowBuilder<ButtonBuilder>().setComponents(
+                        new ActionRowBuilder<ButtonBuilder>().addComponents(
                             new ButtonBuilder()
                                 .setCustomId("music-previous")
                                 .setStyle(ButtonStyle.Primary)
@@ -185,7 +218,7 @@ export class MusicManager extends Manager {
         });
 
         this.on("trackEnd", async (player) => {
-            if (player.trackRepeat) return;
+            if (player.trackRepeat || (player.queueRepeat && player.queue.length === 0)) return;
             Logger.music(`Track ended at ${(await client.guilds.fetch(player.guild)).name}`);
             const originalMsg: Message = player.get("message");
             if (!originalMsg) return;
@@ -234,14 +267,16 @@ export class MusicManager extends Manager {
             player.destroy();
         });
 
-        this.on("trackError", async (player, track) => {
+        this.on("trackError", async (player, track, error) => {
             const channel = await client.channels.fetch(player.textChannel || "");
             if (!channel || !channel?.isTextBased()) return;
 
             Logger.error(
                 `There was an error while resolving track '${
                     track.title
-                }' in ${await client.guilds.fetch(player.guild)}`
+                } in ${await client.guilds.fetch(player.guild)}. Code: ${error.type}. Error: \n${
+                    error.exception?.message
+                }`
             );
 
             channel.send({

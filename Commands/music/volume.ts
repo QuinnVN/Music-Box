@@ -37,12 +37,12 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
         embeds: [
             EmbedBuilder.from(msg.embeds[0]).setFields(
                 {
-                    name: "Author",
+                    name: "🙍‍♂️ Author",
                     value: player.queue.current?.author || "Not Found",
                     inline: true,
                 },
                 {
-                    name: "Duration",
+                    name: "⏱️ Duration",
                     value: `${
                         player.queue.current?.duration
                             ? convertTime(player.queue.current?.duration)
@@ -51,12 +51,12 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                     inline: true,
                 },
                 {
-                    name: "Volume:",
+                    name: "🔈 Volume:",
                     value: player.volume.toString() + "%",
                     inline: true,
                 },
                 {
-                    name: "Loop Mode:",
+                    name: "🔁 Loop Mode:",
                     value: player.trackRepeat
                         ? "🔂 Track"
                         : player.queueRepeat
@@ -65,10 +65,15 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
                     inline: true,
                 },
                 {
-                    name: "🎶 Current Channel:",
+                    name: "🎶 Music Channel:",
                     value: player.voiceChannel
                         ? channelMention(player.voiceChannel)
                         : "Unknown Channel",
+                    inline: true,
+                },
+                {
+                    name: "🎛️ Filters:",
+                    value: `\`${player.get("activefilter") || "None"}\``,
                     inline: true,
                 }
             ),
@@ -87,6 +92,9 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: "🎵 Music",
+    },
     data: new SlashCommandBuilder()
         .setName("volume")
         .setDescription("Adjust the bot's volume")

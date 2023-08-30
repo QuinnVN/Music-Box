@@ -119,6 +119,9 @@ async function report_bugsCommand(interaction: ChatInputCommandInteraction) {
 }
 
 export default new Command({
+    metadata: {
+        catergory: '❓ Miscellaneous'
+    },
     data: new SlashCommandBuilder().setName("report-bug").setDescription("Report bugs to me"),
     run: report_bugsCommand,
 });
