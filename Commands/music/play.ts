@@ -9,7 +9,6 @@ import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors, GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import config from "../../config.js";
 async function playCommand(interaction: ChatInputCommandInteraction) {
-    console.log(interaction.options.data);
     if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
     const MusicBox = interaction.client as MusicBoxClient;
@@ -55,7 +54,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
             voiceChannel: vc.id,
             volume: 40,
             selfDeafen: true,
-            instaUpdateFiltersFix: true,
+            instaUpdateFiltersFix: false,
         });
 
         if (!player.connected) player.connect();
@@ -86,15 +85,13 @@ async function autocompletePlayCommand(
 ) {
     const focused = interaction.options.getFocused();
 
-    try {
-        const res = await client.musicManager.search(focused, interaction.user.id);
-        const tracks = res.tracks.slice(0, 10).map((track) => ({
-            name: track.title.length > 100 ? track.title.slice(0, 96) + "..." : track.title,
-            value: track.uri,
-        }));
+    const res = await client.musicManager.search(focused, interaction.user.id);
+    const tracks = res.tracks.slice(0, 10).map((track) => ({
+        name: track.title.length > 100 ? track.title.slice(0, 96) + "..." : track.title,
+        value: track.uri,
+    }));
 
-        await interaction.respond(tracks);
-    } catch {}
+    await interaction.respond(tracks);
 }
 export default new Command({
     metadata: {

@@ -24,7 +24,10 @@ async function helpCommand(interaction: ChatInputCommandInteraction) {
         const commandEmbed = new EmbedBuilder()
             .setColor(Colors.White)
             .setAuthor({
-                name: `${selectedCommand.data.name}'s Information`,
+                name: `${
+                    selectedCommand.data.name[0].toUpperCase() +
+                    selectedCommand.data.name.slice(1, selectedCommand.data.name.length)
+                }'s Information`,
                 iconURL: MusicBox.user?.displayAvatarURL(),
             })
             .setDescription(selectedCommand.data.description)

@@ -33,7 +33,7 @@ async function pingCommand(interaction: ChatInputCommandInteraction) {
 
 export default new Command({
     metadata: {
-        catergory: '📑 Info'
+        catergory: "📑 Info",
     },
     data: new SlashCommandBuilder().setName("ping").setDescription("Show bot's network infomation"),
     run: pingCommand,

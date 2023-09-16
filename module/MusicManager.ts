@@ -11,7 +11,7 @@ import {
 } from "discord.js";
 import convertTime from "./utilities/convertTime.js";
 import config from "../config.js";
-import { NodeOptions, Manager } from "erela.js";
+import { NodeOptions, Manager, Player } from "erela.js";
 import Spotify from "erela.js-spotify";
 
 export class MusicManager extends Manager {
@@ -298,5 +298,56 @@ export class MusicManager extends Manager {
                     break;
             }
         });
+    }
+
+    async updateControlPanel(player: Player): Promise<void> {
+        const msg: Message = await player.get("message");
+        if (!msg) return;
+        msg.edit({
+            embeds: [
+                EmbedBuilder.from(msg.embeds[0]).setFields(
+                    {
+                        name: "🙍‍♂️ Author",
+                        value: player.queue.current?.author || "Not Found",
+                        inline: true,
+                    },
+                    {
+                        name: "⏱️ Duration",
+                        value: `${
+                            player.queue.current?.duration
+                                ? convertTime(player.queue.current.duration)
+                                : "Not Found"
+                        }`,
+                        inline: true,
+                    },
+                    {
+                        name: "🔈 Volume:",
+                        value: player.volume.toString() + "%",
+                        inline: true,
+                    },
+                    {
+                        name: "🔁 Loop Mode:",
+                        value: player.trackRepeat
+                            ? "🔂 Track"
+                            : player.queueRepeat
+                            ? "🔁 Queue"
+                            : "None",
+                        inline: true,
+                    },
+                    {
+                        name: "🎶 Music Channel:",
+                        value: player.voiceChannel
+                            ? channelMention(player.voiceChannel)
+                            : "Unknown Channel",
+                        inline: true,
+                    },
+                    {
+                        name: "🎛️ Filters:",
+                        value: `\`${player.get<string>("activefilter") || "`None`"}\``,
+                        inline: true,
+                    }
+                ),
+            ],
+        }).then((x) => player.set("message", x));
     }
 }

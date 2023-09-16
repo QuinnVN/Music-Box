@@ -2,8 +2,8 @@ import {
     ActionRowBuilder,
     ChatInputCommandInteraction,
     EmbedBuilder,
+    ModalActionRowComponentBuilder,
     ModalBuilder,
-    ModalSubmitFields,
     ModalSubmitInteraction,
     SlashCommandBuilder,
     TextInputBuilder,
@@ -32,7 +32,7 @@ async function report_bugsCommand(interaction: ChatInputCommandInteraction) {
             .setTitle("Bug Report Form")
             .setCustomId("bug-report")
             .setComponents(
-                new ActionRowBuilder<TextInputBuilder>().setComponents(
+                new ActionRowBuilder<ModalActionRowComponentBuilder>().setComponents(
                     new TextInputBuilder()
                         .setLabel("Title")
                         .setCustomId("report-title")
@@ -40,7 +40,7 @@ async function report_bugsCommand(interaction: ChatInputCommandInteraction) {
                         .setStyle(TextInputStyle.Short)
                         .setRequired(true)
                 ),
-                new ActionRowBuilder<TextInputBuilder>().setComponents(
+                new ActionRowBuilder<ModalActionRowComponentBuilder>().setComponents(
                     new TextInputBuilder()
                         .setLabel("Detail")
                         .setCustomId("report-detail")
@@ -120,7 +120,7 @@ async function report_bugsCommand(interaction: ChatInputCommandInteraction) {
 
 export default new Command({
     metadata: {
-        catergory: '❓ Miscellaneous'
+        catergory: "❓ Miscellaneous",
     },
     data: new SlashCommandBuilder().setName("report-bug").setDescription("Report bugs to me"),
     run: report_bugsCommand,

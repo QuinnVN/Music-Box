@@ -10,6 +10,7 @@ import FastGlob from "fast-glob";
 import { AsciiTable3 } from "ascii-table3";
 import Event from "./module/structures/Events.js";
 import SubCommand from "./module/structures/SubCommand.js";
+import ExceptionHandler from "./module/ExceptionHandler.js";
 const package_json = JSON.parse(readFileSync("./package.json", "utf-8"));
 dotenv.config();
 
@@ -30,6 +31,7 @@ export default class MusicBoxClient extends Client {
         this.CommandsTable = new AsciiTable3("Commands").setHeading("", "Name", "Status", "Note");
         this.EventsTable = new AsciiTable3("Events").setHeading("", "Name", "Status", "Note");
 
+        ExceptionHandler.init(this);
         this.loadCommands(this, "./Commands");
         this.loadEvents(this, "./Events");
 
@@ -41,7 +43,7 @@ export default class MusicBoxClient extends Client {
     public readonly commands: Collection<string, Command>;
     public readonly subCommands: Collection<string, SubCommand>;
     public readonly db: QuickDB;
-    public readonly musicManager: Manager;
+    public readonly musicManager: MusicManager;
 
     private async loadCommands(client: MusicBoxClient, dir: string) {
         let i = 1;

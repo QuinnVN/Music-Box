@@ -21,7 +21,9 @@ async function handleSlashCommand(interaction: Interaction) {
             try {
                 await subCommand.autocomplete(interaction, MusicBox);
             } catch {
-                Logger.error(`Error when autocompleting command ${command.data.name}.${subCommandName}`);
+                Logger.error(
+                    `Error when autocompleting command ${command.data.name}.${subCommandName}`
+                );
             }
         } else {
             if (!command.autocomplete) return;
@@ -119,10 +121,14 @@ async function handleSlashCommand(interaction: Interaction) {
                     content: "There was an error while executing this command",
                     ephemeral: true,
                 });
-            else
+            else if (interaction.replied) {
                 interaction.followUp({
                     content: "There was an error while executing this command",
                     ephemeral: true,
+                });
+            } else
+                interaction.editReply({
+                    content: "There was an error while executing this command",
                 });
 
             Logger.error(error instanceof Error ? error.stack || error.message : error);

@@ -32,54 +32,7 @@ async function volumeCommand(interaction: ChatInputCommandInteraction) {
 
     player.setVolume(volume);
 
-    const msg: Message = player.get("message");
-    msg.edit({
-        embeds: [
-            EmbedBuilder.from(msg.embeds[0]).setFields(
-                {
-                    name: "🙍‍♂️ Author",
-                    value: player.queue.current?.author || "Not Found",
-                    inline: true,
-                },
-                {
-                    name: "⏱️ Duration",
-                    value: `${
-                        player.queue.current?.duration
-                            ? convertTime(player.queue.current?.duration)
-                            : "Not Found"
-                    }`,
-                    inline: true,
-                },
-                {
-                    name: "🔈 Volume:",
-                    value: player.volume.toString() + "%",
-                    inline: true,
-                },
-                {
-                    name: "🔁 Loop Mode:",
-                    value: player.trackRepeat
-                        ? "🔂 Track"
-                        : player.queueRepeat
-                        ? "🔁 Queue"
-                        : "None",
-                    inline: true,
-                },
-                {
-                    name: "🎶 Music Channel:",
-                    value: player.voiceChannel
-                        ? channelMention(player.voiceChannel)
-                        : "Unknown Channel",
-                    inline: true,
-                },
-                {
-                    name: "🎛️ Filters:",
-                    value: `\`${player.get("activefilter") || "None"}\``,
-                    inline: true,
-                }
-            ),
-        ],
-        components: msg.components,
-    }).then((x) => player.set("message", x));
+    MusicBox.musicManager.updateControlPanel(player);
 
     interaction.reply({
         embeds: [
