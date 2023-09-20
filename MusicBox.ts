@@ -149,9 +149,6 @@ export default class MusicBoxClient extends Client {
     private loadDB(dir: string): QuickDB {
         if (!existsSync(dir) || !lstatSync(dir).isDirectory()) {
             mkdirSync(dir);
-            const modifiedDir = dir.split("/");
-            modifiedDir.shift();
-            appendFileSync("./.gitignore", `\n\n# DB\n${modifiedDir}/`);
         }
 
         const driver = new SqliteDriver(`${dir}/db.sqlite`);
