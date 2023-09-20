@@ -4,7 +4,6 @@ import Command from "./module/structures/Command.js";
 import { lstatSync, readFileSync, mkdirSync, existsSync, appendFileSync } from "fs";
 import config from "./config.js";
 import dotenv from "dotenv";
-import { Manager } from "erela.js";
 import { MusicManager } from "./module/MusicManager.js";
 import FastGlob from "fast-glob";
 import { AsciiTable3 } from "ascii-table3";
@@ -92,6 +91,8 @@ export default class MusicBoxClient extends Client {
             }
             i++;
         });
+
+        console.log(this.CommandsTable.toString());
     }
 
     public readonly CommandsTable: AsciiTable3;
@@ -142,6 +143,7 @@ export default class MusicBoxClient extends Client {
             }
             i++;
         });
+
     }
 
     public readonly EventsTable: AsciiTable3;

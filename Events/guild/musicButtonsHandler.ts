@@ -106,6 +106,7 @@ async function musicButtonsHandler(interaction: Interaction) {
 
             player.queue.unshift(player.queue.previous);
             player.stop();
+            player.queue.unshift(player.queue.previous);
 
             break;
         }

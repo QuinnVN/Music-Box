@@ -33,7 +33,6 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
                 track.duration ? convertTime(track.duration) : "N/A"
             }]**`
     );
-
     const pages = Math.ceil(player.queue.length / 10);
 
     for (let i = 1; i <= pages; i++) {
@@ -45,7 +44,9 @@ async function queueCommand(interaction: ChatInputCommandInteraction) {
                     iconURL: MusicBox.user?.displayAvatarURL(),
                 })
                 .setDescription(queue.slice(i * 10 - 10, i * 10).join("\n"))
-                .setFooter({ text: `Page ${i}/${pages}` })
+                .setFooter({
+                    text: `Page ${i}/${pages} | Total songs: ${player.queue.length} song(s)`,
+                })
         );
     }
     let msg: Message | null = null;

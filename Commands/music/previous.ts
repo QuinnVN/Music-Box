@@ -16,6 +16,7 @@ async function previousCommand(interaction: ChatInputCommandInteraction) {
 
     player.queue.unshift(player.queue.previous);
     player.stop();
+    player.queue.unshift(player.queue.previous);
 
     interaction.reply({
         embeds: [
