@@ -1,14 +1,19 @@
 import {
+    AutocompleteInteraction,
     ChatInputCommandInteraction,
+    Colors,
     EmbedBuilder,
+    Message,
     SlashCommandBuilder,
     SlashCommandSubcommandBuilder,
+    channelMention,
 } from "discord.js";
 import Command from "../../module/structures/Command.js";
 import SubCommand from "../../module/structures/SubCommand.js";
 import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
 import MusicBoxClient from "../../MusicBox.js";
 import config from "../../config.js";
+import convertTime from "../../module/utilities/convertTime.js";
 
 async function setSubcommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) throw new GuildErrors.NotInGuild();
@@ -65,7 +70,54 @@ async function setSubcommand(interaction: ChatInputCommandInteraction) {
         await player.updatePlayerFilters();
         player.set("activefilter", chosenFilter);
 
-        MusicBox.musicManager.updateControlPanel(player);
+        const msg: Message = player.get("message");
+
+        msg.edit({
+            embeds: [
+                EmbedBuilder.from(msg.embeds[0]).setFields(
+                    {
+                        name: "🙍‍♂️ Author",
+                        value: player.queue.current?.author || "Not Found",
+                        inline: true,
+                    },
+                    {
+                        name: "⏱️ Duration",
+                        value: `${
+                            player.queue.current?.duration
+                                ? convertTime(player.queue.current?.duration)
+                                : "Not Found"
+                        }`,
+                        inline: true,
+                    },
+                    {
+                        name: "🔈 Volume:",
+                        value: player.volume.toString() + "%",
+                        inline: true,
+                    },
+                    {
+                        name: "🔁 Loop Mode:",
+                        value: player.trackRepeat
+                            ? "🔂 Track"
+                            : player.queueRepeat
+                            ? "🔁 Queue"
+                            : "None",
+                        inline: true,
+                    },
+                    {
+                        name: "🎶 Music Channel:",
+                        value: player.voiceChannel
+                            ? channelMention(player.voiceChannel)
+                            : "Unknown Channel",
+                        inline: true,
+                    },
+                    {
+                        name: "🎛️ Filters:",
+                        value: `\`${chosenFilter}\``,
+                        inline: true,
+                    }
+                ),
+            ],
+        }).then((x) => player.set("message", x));
 
         interaction.editReply({
             embeds: [
@@ -104,7 +156,7 @@ async function removeSubCommand(interaction: ChatInputCommandInteraction) {
     await player.resetFilters();
     player.set("activefilter", null);
 
-    await MusicBox.musicManager.updateControlPanel(player);
+    MusicBox.musicManager.updateControlPanel(player);
 
     interaction.reply({
         embeds: [
