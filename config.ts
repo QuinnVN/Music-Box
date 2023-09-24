@@ -11,12 +11,12 @@ export default {
     lavalinkNodes: [
         {
             identifier: "Default",
-            host: "hatkidll.gremagol.xyz",
+            host: "lavalink",
             port: 2334,
             password: "easypass",
             secure: false,
-            // version: "v4" as const,
-            // useVersionPath: true,
+            version: "v4" as const,
+            useVersionPath: true,
         },
     ],
 

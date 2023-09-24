@@ -272,11 +272,9 @@ export class MusicManager extends Manager {
             if (!channel || !channel?.isTextBased()) return;
 
             Logger.error(
-                `There was an error while resolving track '${
-                    track.title
-                } in ${await client.guilds.fetch(player.guild)}. Code: ${error.type}. Error: \n${
-                    error.exception?.message
-                }`
+                `There was an error while resolving track '${track.title} in ${
+                    (await client.guilds.fetch(player.guild)).name
+                }. Code: ${error.type}. Error: \n${error.exception?.message}`
             );
 
             channel.send({
@@ -288,6 +286,28 @@ export class MusicManager extends Manager {
                         ),
                 ],
             });
+        });
+
+        this.on("trackStuck", async (player, track) => {
+            const channel = await client.channels.fetch(player.textChannel || "");
+            if (!channel || !channel?.isTextBased()) return;
+            Logger.error(
+                `There was an error while playing track '${track.title} in ${
+                    (await client.guilds.fetch(player.guild)).name
+                }.`
+            );
+
+            channel.send({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor(config.pallete.warn)
+                        .setDescription(
+                            `There was an error while playing your requested track **${track.title}**. Skipping...`
+                        ),
+                ],
+            });
+
+            await player.stop();
         });
 
         client.on("raw", (data) => {

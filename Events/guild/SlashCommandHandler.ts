@@ -67,7 +67,7 @@ async function handleSlashCommand(interaction: Interaction) {
                             new EmbedBuilder()
                                 .setColor(Colors.Red)
                                 .setAuthor({
-                                    name: "Error",
+                                    name: error.message || "Error",
                                     iconURL: MusicBox.user?.displayAvatarURL(),
                                 })
                                 .setDescription(
@@ -84,7 +84,7 @@ async function handleSlashCommand(interaction: Interaction) {
                             new EmbedBuilder()
                                 .setColor(Colors.Red)
                                 .setAuthor({
-                                    name: "Error",
+                                    name: error.message || "Error",
                                     iconURL: MusicBox.user?.displayAvatarURL(),
                                 })
                                 .setDescription(
@@ -102,7 +102,7 @@ async function handleSlashCommand(interaction: Interaction) {
                             new EmbedBuilder()
                                 .setColor(Colors.Red)
                                 .setAuthor({
-                                    name: "Error",
+                                    name: error.message || "Error",
                                     iconURL: MusicBox.user?.displayAvatarURL(),
                                 })
                                 .setDescription(
