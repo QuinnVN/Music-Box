@@ -12,9 +12,8 @@ export default {
         {
             identifier: "Default",
             host: "lavalink",
-            port: 2334,
-            password: "easypass",
-            secure: false,
+            port: 2333,
+            password: "quinnvnlavalinkftw",
             version: "v4" as const,
             useVersionPath: true,
         },

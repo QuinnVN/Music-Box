@@ -26,8 +26,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
 
         const res = await player.search(req, interaction.user.id);
         if (!res.tracks.length || res.tracks[0] === null) throw new MusicErrors.TrackNotFound();
-        if (res.loadType === "PLAYLIST_LOADED")
-            for (const track of res.tracks) player.queue.add(track);
+        if (res.loadType === "playlist") for (const track of res.tracks) player.queue.add(track);
         else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
@@ -36,7 +35,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.loadType === "PLAYLIST_LOADED"
+                        res.loadType === "playlist"
                             ? `Added **${res.tracks.length} tracks** from **${
                                   res.playlist?.name || "Unknown Playlist"
                               }** to the queue`
@@ -59,8 +58,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
 
         if (!player.connected) player.connect();
 
-        if (res.loadType === "PLAYLIST_LOADED")
-            for (const track of res.tracks) player.queue.add(track);
+        if (res.loadType === "playlist") for (const track of res.tracks) player.queue.add(track);
         else player.queue.add(res.tracks[0]);
 
         if (!player.playing && !player.paused) player.play();
@@ -69,7 +67,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
                 new EmbedBuilder()
                     .setColor(config.pallete.default)
                     .setDescription(
-                        res.loadType === "PLAYLIST_LOADED"
+                        res.loadType === "playlist"
                             ? `Added **${res.tracks.length} tracks** from **${
                                   res.playlist?.name || "Unknown Playlist"
                               }** to the queue`
