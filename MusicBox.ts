@@ -20,7 +20,7 @@ import Event from "./module/structures/Events.js";
 import SubCommand from "./module/structures/SubCommand.js";
 import ExceptionHandler from "./module/ExceptionHandler.js";
 import path from "path";
-import { URL, fileURLToPath, pathToFileURL } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 const package_json = JSON.parse(readFileSync("./package.json", "utf-8"));
 dotenv.config();
 

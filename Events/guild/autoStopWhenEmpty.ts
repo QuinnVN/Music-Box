@@ -1,6 +1,12 @@
 import { Events, VoiceState } from "discord.js";
 import Event from "../../module/structures/Events.js";
 import MusicBoxClient from "../../MusicBox.js";
+import { Player } from "erela.js";
+
+function fullStop(player: Player): void {
+    player.queue.clear();
+    player.stop();
+}
 
 async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
     const MusicBox = oldState.client as MusicBoxClient;
@@ -8,13 +14,16 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
     const newChannel = newState.channel;
     //Leave the channel
     if (oldChannel && !newChannel) {
-        if (!(oldChannel.members.filter((member) => !member.user.bot).size < 1)) return;
         const player = MusicBox.musicManager.players.get(oldChannel.guild.id);
         if (!player) return;
+        if (oldState.member?.user.id === MusicBox.user?.id) {
+            fullStop(player);
+        }
+
+        if (!(oldChannel.members.filter((member) => !member.user.bot).size < 1)) return;
         if (oldChannel.id !== player.voiceChannel) return;
         try {
-            player.queue.clear();
-            player.stop();
+            fullStop(player);
         } catch {}
     }
     // Switch channel
@@ -24,9 +33,7 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
         if (!player) return;
         if (oldChannel.id !== player.voiceChannel) return;
         try {
-            player.queue.clear();
-            player.stop();
-            
+            fullStop(player);
         } catch {}
     }
 }
