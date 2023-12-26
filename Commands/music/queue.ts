@@ -18,7 +18,6 @@ import ms from "ms";
 
 async function queueCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) throw new GuildErrors.NotInGuild();
-
     const MusicBox = interaction.client as MusicBoxClient;
 
     const player = MusicBox.musicManager.players.get(interaction.guild.id);

@@ -1,7 +1,15 @@
 import { QuickDB, SqliteDriver } from "quick.db";
-import { Client, ClientOptions, Collection, GatewayIntentBits } from "discord.js";
+import {
+    ActivityType,
+    Client,
+    ClientOptions,
+    Collection,
+    GatewayIntentBits,
+    PresenceUpdateStatus,
+    Status,
+} from "discord.js";
 import Command from "./module/structures/Command.js";
-import { lstatSync, readFileSync, mkdirSync, existsSync, appendFileSync } from "fs";
+import { lstatSync, readFileSync, mkdirSync, existsSync } from "fs";
 import config from "./config.js";
 import dotenv from "dotenv";
 import { Manager } from "erela.js";
@@ -11,6 +19,8 @@ import { AsciiTable3 } from "ascii-table3";
 import Event from "./module/structures/Events.js";
 import SubCommand from "./module/structures/SubCommand.js";
 import ExceptionHandler from "./module/ExceptionHandler.js";
+import path from "path";
+import { URL, fileURLToPath, pathToFileURL } from "url";
 const package_json = JSON.parse(readFileSync("./package.json", "utf-8"));
 dotenv.config();
 
@@ -32,8 +42,11 @@ export default class MusicBoxClient extends Client {
         this.EventsTable = new AsciiTable3("Events").setHeading("", "Name", "Status", "Note");
 
         ExceptionHandler.init(this);
-        this.loadCommands(this, "./Commands");
-        this.loadEvents(this, "./Events");
+
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+        this.loadCommands(this, FastGlob.convertPathToPattern(path.join(__dirname, "./Commands")));
+        this.loadEvents(this, FastGlob.convertPathToPattern(path.join(__dirname, "./Events")));
 
         this.musicManager = new MusicManager(this, config.lavalinkNodes);
     }
@@ -47,12 +60,14 @@ export default class MusicBoxClient extends Client {
 
     private async loadCommands(client: MusicBoxClient, dir: string) {
         let i = 1;
-        FastGlob.globSync(`${dir}/**/*.ts`).forEach(async (item) => {
-            const command = (await import(item)).default as Command;
+        FastGlob.globSync([`${dir}/**/*.js`, `${dir}/**/*.ts`]).forEach(async (item) => {
+            const command = (await import(pathToFileURL(item).pathname)).default as Command;
 
             if (command.subCommands.length) {
                 command.subCommands.forEach(async (subcmd) => {
-                    const subCommand = (await import(item))[subcmd] as SubCommand;
+                    const subCommand = (await import(pathToFileURL(item).pathname))[
+                        subcmd
+                    ] as SubCommand;
                     if (!subCommand || !subCommand.run) {
                         this.CommandsTable.addRow(
                             i.toString(),
@@ -77,7 +92,7 @@ export default class MusicBoxClient extends Client {
             if (!command || !command.data || (!command.run && !command.subCommands.length)) {
                 this.CommandsTable.addRow(
                     i.toString(),
-                    item.split("/").find((x) => x.endsWith(".ts")),
+                    item.split("/").find((x) => x.endsWith(".ts") || x.endsWith(".js")),
                     "Error",
                     "Cannot Load Data/Run"
                 );
@@ -98,14 +113,14 @@ export default class MusicBoxClient extends Client {
 
     private async loadEvents(client: MusicBoxClient, dir: string) {
         let i = 1;
-        FastGlob.globSync(`${dir}/**/*.ts`).forEach(async (item) => {
-            const event = (await import(item)).default as Event<any>;
+        FastGlob.globSync([`${dir}/**/*.js`, `${dir}/**/*.ts`]).forEach(async (item) => {
+            const event = (await import(pathToFileURL(item).pathname)).default as Event<any>;
             if (!event) {
                 this.EventsTable.addRow(
                     i.toString(),
                     item
                         .split("/")
-                        .filter((x) => x.endsWith(".ts"))
+                        .filter((x) => x.endsWith(".ts") || x.endsWith(".js"))
                         .join("")
                         .split(".")[0],
                     "Error",
@@ -121,7 +136,7 @@ export default class MusicBoxClient extends Client {
                     i.toString(),
                     item
                         .split("/")
-                        .filter((x) => x.endsWith(".ts"))
+                        .filter((x) => x.endsWith(".ts") || x.endsWith(".js"))
                         .join("")
                         .split(".")[0],
                     "Loaded",
@@ -133,7 +148,7 @@ export default class MusicBoxClient extends Client {
                     i.toString(),
                     item
                         .split("/")
-                        .filter((x) => x.endsWith(".ts"))
+                        .filter((x) => x.endsWith(".ts") || x.endsWith(".js"))
                         .join("")
                         .split(".")[0],
                     "Loaded",
@@ -170,6 +185,10 @@ const MusicBox = new MusicBoxClient({
         GatewayIntentBits.GuildVoiceStates,
         GatewayIntentBits.Guilds,
     ],
+    presence: {
+        activities: [{ name: "🎶 Beta Testing", type: ActivityType.Playing }],
+        status: PresenceUpdateStatus.Idle,
+    },
     version: package_json.version,
     developers: ["735464638468063295"],
 });

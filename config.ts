@@ -11,7 +11,7 @@ export default {
     lavalinkNodes: [
         {
             identifier: "Default",
-            host: "lavalink",
+            host: "103.45.236.103",
             port: 2333,
             password: "quinnvnlavalinkftw",
             version: "v4" as const,
@@ -19,7 +19,7 @@ export default {
         },
     ],
 
-    dataDirectory: "./Data",
+    dataDirectory: "/data",
 
     spotify: {
         clientID: "", //"fc71055b089745069cfa8154bbe7669c",

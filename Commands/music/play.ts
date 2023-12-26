@@ -53,7 +53,7 @@ async function playCommand(interaction: ChatInputCommandInteraction) {
             voiceChannel: vc.id,
             volume: 40,
             selfDeafen: true,
-            instaUpdateFiltersFix: false,
+            instaUpdateFiltersFix: true,
         });
 
         if (!player.connected) player.connect();

@@ -2,12 +2,15 @@ FROM node:18.13.0
 
 WORKDIR /
 
-COPY package*.json .
+COPY package.json .
+COPY yarn.lock .
 
-RUN npm ci
+RUN yarn install --immutable --immutable-cache --check-cache
 
 COPY . .
 
+VOLUME [ "/data" ]
+
 EXPOSE 2334
 
-CMD [ "npm", "run", "start" ]
+CMD [ "yarn", "start" ]
