@@ -33,7 +33,7 @@ test.ts
 test.png
 
 # DB
-Data/
+data/
 
 # env
 .env
