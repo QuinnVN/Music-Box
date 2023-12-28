@@ -168,10 +168,6 @@ async function removeSubCommand(interaction: ChatInputCommandInteraction) {
     });
 }
 
-async function addSubCommand(interaction: ChatInputCommandInteraction) {
-    interaction.reply("hi");
-}
-
 export default new Command({
     metadata: {
         catergory: "🎵 Music",
@@ -237,18 +233,6 @@ export default new Command({
                 .setName("remove")
                 .setDescription("Remove all sound filters")
         ),
-    // .addSubcommand(
-    //     new SlashCommandSubcommandBuilder()
-    //         .setName("add")
-    //         .setDescription("Add filter to bot's current playinng sound")
-    //         .addStringOption((options) =>
-    //             options
-    //                 .setName("filter")
-    //                 .setDescription("The filter you want to add")
-    //                 .setRequired(true)
-    //                 .setAutocomplete(true)
-    //         )
-    // ),
     subCommands: ["set", "remove"],
 });
 
@@ -258,8 +242,4 @@ export const set = new SubCommand({
 
 export const remove = new SubCommand({
     run: removeSubCommand,
-});
-
-export const add = new SubCommand({
-    run: addSubCommand,
 });

@@ -4,6 +4,7 @@ import {
     Colors,
     EmbedBuilder,
     SlashCommandBuilder,
+    codeBlock,
 } from "discord.js";
 import Command from "../../module/structures/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
@@ -97,17 +98,15 @@ async function helpCommand(interaction: ChatInputCommandInteraction) {
             );
 
         catergories.forEach((catergory) => {
-            let commands = "";
             const commandsInCatergory = MusicBox.commands.filter(
                 (cmd) => cmd.metadata.catergory === catergory
             );
-            commandsInCatergory.forEach((cmd) => {
-                if (commandsInCatergory.last() === cmd) commands += `\`/${cmd.data.name}\``;
-                else commands += `\`/${cmd.data.name}\`,`;
-            });
+
             helpEmbed.addFields({
                 name: `${catergory} commands:`,
-                value: commands,
+                value: Array.from(commandsInCatergory.keys())
+                    .map((cmd) => `\`/${cmd}\``)
+                    .join(","),
             });
         });
 
