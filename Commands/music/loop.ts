@@ -1,15 +1,12 @@
 import {
     ChatInputCommandInteraction,
     EmbedBuilder,
-    Message,
-    SlashCommandBuilder,
-    channelMention,
+    SlashCommandBuilder
 } from "discord.js";
-import Command from "../../module/structures/Command.js";
 import MusicBoxClient from "../../MusicBox.js";
 import config from "../../config.js";
-import convertTime from "../../module/utilities/convertTime.js";
 import { GuildErrors, MusicErrors } from "../../module/errors/index.js";
+import Command from "../../module/structures/Command.js";
 
 async function loopCommand(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) throw new GuildErrors.NotInGuild();

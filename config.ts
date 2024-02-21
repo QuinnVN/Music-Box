@@ -8,17 +8,6 @@ export default {
         warn: Colors.Yellow,
     },
 
-    lavalinkNodes: [
-        {
-            identifier: "Default",
-            host: "103.45.236.103",
-            port: 2333,
-            password: "quinnvnlavalinkftw",
-            version: "v4" as const,
-            useVersionPath: true,
-        },
-    ],
-
     dataDirectory: "/data",
 
     spotify: {

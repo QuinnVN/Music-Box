@@ -11,6 +11,4 @@ COPY . .
 
 VOLUME [ "/data" ]
 
-EXPOSE 2334
-
 CMD [ "yarn", "start" ]

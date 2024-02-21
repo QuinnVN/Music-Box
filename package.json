@@ -6,8 +6,7 @@
     "scripts": {
         "dev": "tsx watch MusicBox",
         "start": "tsc && node dist/MusicBox.js",
-        "build": "tsc",
-        "init": "yarn install"
+        "build": "tsc"
     },
     "dependencies": {
         "@types/ms": "^0.7.34",
@@ -29,5 +28,5 @@
         "tsx": "^4.7.0",
         "typescript": "^5.3.3"
     },
-    "packageManager": "yarn@4.0.2"
+    "packageManager": "yarn@4.1.0"
 }
