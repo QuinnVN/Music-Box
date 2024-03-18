@@ -1,7 +1,7 @@
 import { Colors, EmbedBuilder, Events, Interaction } from "discord.js";
 import MusicBoxClient from "../../MusicBox.js";
 import { BaseErrors } from "../../module/errors/index.js";
-import Event from "../../module/structures/Events.js";
+import Event from "../../module/structures/Event.js";
 
 async function ContextMenuHandler(interaction: Interaction) {
   if (!interaction.isContextMenuCommand()) return;

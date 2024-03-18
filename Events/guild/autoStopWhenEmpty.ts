@@ -1,7 +1,7 @@
 import { Events, VoiceState } from "discord.js";
 import { Player } from "erela.js";
 import MusicBoxClient from "../../MusicBox.js";
-import Event from "../../module/structures/Events.js";
+import Event from "../../module/structures/Event.js";
 
 function fullStop(player: Player): void {
   player.queue.clear();

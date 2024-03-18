@@ -74,7 +74,7 @@ async function playContextMenu(interaction: ContextMenuCommandInteraction) {
 
 export default new ContextMenu({
   data: new ContextMenuCommandBuilder()
-    .setName("Add song to queue from link")
+    .setName("Add song to queue from link (BETA)")
     .setType(ApplicationCommandType.Message),
   run: playContextMenu,
 });

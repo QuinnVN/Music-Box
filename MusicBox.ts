@@ -15,7 +15,7 @@ import dotenv from "dotenv";
 import { MusicManager } from "./module/MusicManager.js";
 import FastGlob from "fast-glob";
 import { AsciiTable3 } from "ascii-table3";
-import Event from "./module/structures/Events.js";
+import Event from "./module/structures/Event.js";
 import SubCommand from "./module/structures/SubCommand.js";
 import ExceptionHandler from "./module/ExceptionHandler.js";
 import path from "path";

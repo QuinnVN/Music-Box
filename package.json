@@ -1,6 +1,6 @@
 {
     "name": "musicbox",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "module": "MusicBox.ts",
     "type": "module",
     "scripts": {

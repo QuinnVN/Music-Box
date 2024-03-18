@@ -1,5 +1,5 @@
 import { EmbedBuilder, Events, Interaction } from "discord.js";
-import Event from "../../module/structures/Events.js";
+import Event from "../../module/structures/Event.js";
 import config from "../../config.js";
 import MusicBoxClient from "../../MusicBox.js";
 
