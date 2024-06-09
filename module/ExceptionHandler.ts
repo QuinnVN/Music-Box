@@ -1,5 +1,3 @@
-import chalk from "chalk";
-import MusicBoxClient from "../MusicBox.js";
 import Logger from "./Logger.js";
 export default class ExceptionHandler {
   static init() {

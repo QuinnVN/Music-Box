@@ -4,6 +4,8 @@ import MusicBoxClient from "../../MusicBox.js";
 import Event from "../../module/structures/Event.js";
 
 function fullStop(player: Player): void {
+  player.setQueueRepeat(false);
+  player.setTrackRepeat(false);
   player.queue.clear();
   player.stop();
 }
