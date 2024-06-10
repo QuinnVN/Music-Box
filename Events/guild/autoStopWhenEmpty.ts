@@ -4,10 +4,11 @@ import MusicBoxClient from "../../MusicBox.js";
 import Event from "../../module/structures/Event.js";
 
 function fullStop(player: Player): void {
-  player.setTrackRepeat(false);
-  player.setQueueRepeat(false);
+  if (player.trackRepeat) player.setTrackRepeat(false);
+  else player.setQueueRepeat(false);
   player.queue.clear();
   player.stop();
+  player.destroy(true);
 }
 
 async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
