@@ -216,33 +216,7 @@ export class MusicManager extends Manager {
               .setEmoji("<:next:1127224333878689832>")
               .setDisabled(true),
           ),
-          // new ActionRowBuilder<ButtonBuilder>().setComponents(
-          //   new ButtonBuilder()
-          //     .setCustomId("music-")
-          //     .setStyle(ButtonStyle.Primary)
-          //     .setEmoji("<:rewindbutton:1127226249358610432>")
-          //     .setDisabled(true),
-          //   new ButtonBuilder()
-          //     .setCustomId("music-reverse")
-          //     .setStyle(ButtonStyle.Primary)
-          //     .setEmoji("<:previoustrack:1127226427947884554>")
-          //     .setDisabled(true),
-          //   new ButtonBuilder()
-          //     .setCustomId("music-play/pause")
-          //     .setStyle(ButtonStyle.Success)
-          //     .setEmoji("<:playpause:1128199382756511776>")
-          //     .setDisabled(true),
-          //   new ButtonBuilder()
-          //     .setCustomId("music-forward")
-          //     .setStyle(ButtonStyle.Primary)
-          //     .setEmoji("<:nextbutton:1127223968605143170>")
-          //     .setDisabled(true),
-          //   new ButtonBuilder()
-          //     .setCustomId("music-next")
-          //     .setStyle(ButtonStyle.Primary)
-          //     .setEmoji("<:fastforward:1127224333878689832>")
-          //     .setDisabled(true),
-          // ),
+          
         ],
       });
       const channel = await client.channels.fetch(player.textChannel || "");

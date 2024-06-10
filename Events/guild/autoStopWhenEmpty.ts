@@ -3,14 +3,6 @@ import { Player } from "erela.js";
 import MusicBoxClient from "../../MusicBox.js";
 import Event from "../../module/structures/Event.js";
 
-function fullStop(player: Player): void {
-  if (player.trackRepeat) player.setTrackRepeat(false);
-  else player.setQueueRepeat(false);
-  player.queue.clear();
-  player.stop();
-  player.destroy(true);
-}
-
 async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
   const MusicBox = oldState.client as MusicBoxClient;
   const oldChannel = oldState.channel;
@@ -20,14 +12,14 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
     const player = MusicBox.musicManager.players.get(oldChannel.guild.id);
     if (!player) return;
     if (oldState.member?.user.id === MusicBox.user?.id) {
-      fullStop(player);
+      player.destroy(true);
     }
 
     if (!(oldChannel.members.filter((member) => !member.user.bot).size < 1))
       return;
     if (oldChannel.id !== player.voiceChannel) return;
     try {
-      fullStop(player);
+      player.destroy(true);
     } catch {}
   }
   // Switch channel
@@ -38,7 +30,7 @@ async function autoStopWhenEmpty(oldState: VoiceState, newState: VoiceState) {
     if (!player) return;
     if (oldChannel.id !== player.voiceChannel) return;
     try {
-      fullStop(player);
+      player.destroy(true);
     } catch {}
   }
 }
