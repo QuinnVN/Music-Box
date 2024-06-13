@@ -1,18 +1,17 @@
 import chalk from "chalk";
-import MusicBoxClient from "../MusicBox.js";
-import Logger from "./Logger.js";
 import {
-  EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  EmbedBuilder,
   Message,
   channelMention,
 } from "discord.js";
-import convertTime from "./utilities/convertTime.js";
+import { Manager, NodeOptions, Player } from "erela.js";
+import MusicBoxClient from "../MusicBox.js";
 import config from "../config.js";
-import { NodeOptions, Manager, Player } from "erela.js";
-import Spotify from "erela.js-spotify";
+import Logger from "./Logger.js";
+import convertTime from "./utilities/convertTime.js";
 
 export class MusicManager extends Manager {
   constructor(client: MusicBoxClient, nodes: NodeOptions[]) {
@@ -216,7 +215,6 @@ export class MusicManager extends Manager {
               .setEmoji("<:next:1127224333878689832>")
               .setDisabled(true),
           ),
-          
         ],
       });
       const channel = await client.channels.fetch(player.textChannel || "");
@@ -248,12 +246,12 @@ export class MusicManager extends Manager {
             new ButtonBuilder()
               .setCustomId("music-previous")
               .setStyle(ButtonStyle.Primary)
-              .setEmoji("<:rewindbutton:1127226249358610432>")
+              .setEmoji("<:previous:1127226249358610432>")
               .setDisabled(true),
             new ButtonBuilder()
               .setCustomId("music-reverse")
               .setStyle(ButtonStyle.Primary)
-              .setEmoji("<:previoustrack:1127226427947884554>")
+              .setEmoji("<:rewind:1209503975896911872>")
               .setDisabled(true),
             new ButtonBuilder()
               .setCustomId("music-play/pause")
@@ -263,12 +261,12 @@ export class MusicManager extends Manager {
             new ButtonBuilder()
               .setCustomId("music-forward")
               .setStyle(ButtonStyle.Primary)
-              .setEmoji("<:nextbutton:1127223968605143170>")
+              .setEmoji("<:fastforward:1209503978090659921>")
               .setDisabled(true),
             new ButtonBuilder()
               .setCustomId("music-next")
               .setStyle(ButtonStyle.Primary)
-              .setEmoji("<:fastforward:1127224333878689832>")
+              .setEmoji("<:next:1127224333878689832>")
               .setDisabled(true),
           ),
         ],
