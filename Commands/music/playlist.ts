@@ -10,6 +10,7 @@ import {
   SlashCommandBuilder,
   SlashCommandStringOption,
   SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandGroupBuilder,
   hyperlink,
 } from "discord.js";
 import { Player } from "erela.js";
@@ -239,30 +240,34 @@ async function listSubCommand(interaction: ChatInputCommandInteraction) {
 }
 
 async function playSubCommand(interaction: ChatInputCommandInteraction) {
+  // TODO: validate playlists before loading playlist
+  // async function validatePlaylist(client: MusicBoxClient, playlist: PlaylistTrack[]) {
+  //   playlist.map((track,i,arr) => {
+  //     client.musicManager.searchLink(track.trackURL).catch(() => {
+  //       arr.
+  //     })
+  //   })
+  // }
+
   async function loadPlaylistIntoQueue(
     player: Player,
-    playlist: Array<PlaylistTrack | undefined>,
-    merge: boolean,
-  ): Promise<Array<PlaylistTrack | undefined>> {
-    playlist.forEach(async (track, i) => {
-      const req = await player
-        .search(track!.trackURL, interaction.user.id)
-        .catch(() => {
-          playlist[i] = undefined;
-          return null;
-        });
-      if (!req) return;
+    playlist: PlaylistTrack[],
+    merge: boolean | null,
+  ): Promise<void> {
+    for (const track of playlist) {
+      const req = await player.search(track!.trackURL, interaction.user.id);
+      console.log(req);
+      if (!req) continue;
       if (!merge) player.queue.clear();
-      if (req.loadType === "playlist") player.queue.push(...req.tracks);
-      else player.queue.push(req.tracks[0]);
-    });
-    return playlist.filter((list) => list !== undefined);
+      if (req.loadType === "playlist")
+        for (const t of req.tracks) player.queue.add(t);
+      else player.queue.add(req.tracks[0]);
+    }
   }
 
   if (!interaction.guild) throw new GuildErrors.NotInGuild();
 
-  const merge: boolean = interaction.options.getBoolean("merge") || true;
-
+  const merge: boolean | null = interaction.options.getBoolean("merge") || true;
   const MusicBox = interaction.client as MusicBoxClient;
 
   await interaction.deferReply();
@@ -271,7 +276,10 @@ async function playSubCommand(interaction: ChatInputCommandInteraction) {
     ?.voice.channel;
   if (!vc) throw new MusicErrors.NotInVoice();
 
-  const playlist = await MusicBox.db.get(`playlists.${interaction.user.id}`);
+  const playlist: PlaylistTrack[] | null = await MusicBox.db.get(
+    `playlists.${interaction.user.id}`,
+  );
+  if (!playlist) throw new MusicErrors.NoSongInPlaylist();
 
   let player = MusicBox.musicManager.players.get(interaction.guild.id);
   if (player) {
@@ -300,9 +308,19 @@ async function playSubCommand(interaction: ChatInputCommandInteraction) {
       instaUpdateFiltersFix: true,
     });
 
-    if (!player.connected) player.connect();
-
     await loadPlaylistIntoQueue(player, playlist, merge);
+    // playlist.forEach(async (track) => {
+    //   const req = await player!.search(track!.trackURL, interaction.user.id);
+    //   console.log(req);
+    //   if (!req) return;
+    //   if (!merge) player!.queue.clear();
+    //   if (req.loadType === "playlist")
+    //     for (const t of req.tracks) player!.queue.add(t);
+    //   else player!.queue.add(req.tracks[0]);
+    // });
+
+    console.log(player.queue);
+    if (!player.connected) player.connect();
 
     if (!player.playing && !player.paused) player.play();
     interaction.editReply({
@@ -355,7 +373,7 @@ export default new Command({
     .addSubcommand(
       new SlashCommandSubcommandBuilder()
         .setName("play")
-        .setDescription("Play your playlist")
+        .setDescription("Load your playlist into your queue")
         .addBooleanOption(
           new SlashCommandBooleanOption()
             .setName("merge")
@@ -363,8 +381,33 @@ export default new Command({
               "Merge your playlist with the current queue (DEFAULT: true)",
             ),
         ),
+    )
+    .addSubcommandGroup(
+      new SlashCommandSubcommandGroupBuilder()
+        .setName("load")
+        .setDescription("Load songs into your playlist")
+        .addSubcommand(
+          new SlashCommandSubcommandBuilder()
+            .setName("queue")
+            .setDescription(
+              "Load songs from the current queue to your playlist",
+            ),
+        )
+        .addSubcommand(
+          new SlashCommandSubcommandBuilder()
+            .setName("other")
+            .setDescription(
+              "Load songs from playlist on other platform to your playlist",
+            )
+            .addStringOption(
+              new SlashCommandStringOption()
+                .setName("link")
+                .setDescription("Link to the playlist")
+                .setRequired(true),
+            ),
+        ),
     ),
-  subCommands: ["add", "list", "remove", "play"],
+  subCommands: ["add", "list", "remove", "play", "load"],
 });
 
 export const add = new SubCommand({

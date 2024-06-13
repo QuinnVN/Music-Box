@@ -41,6 +41,7 @@ async function handleSlashCommand(interaction: Interaction) {
 
   if (interaction.isChatInputCommand()) {
     try {
+      const subcommandGroupName = interaction.options.getSubcommandGroup(false);
       const subCommandName = interaction.options.getSubcommand(false);
       if (subCommandName) {
         const subCommand = MusicBox.subCommands.get(
