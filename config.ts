@@ -8,7 +8,7 @@ export default {
         warn: Colors.Yellow,
     },
 
-    dataDirectory: "/data",
+    dataDirectory: "./data",
 
     spotify: {
         clientID: "", //"fc71055b089745069cfa8154bbe7669c",
